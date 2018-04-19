@@ -242,9 +242,7 @@ main(void)
     while (1)
     {
         //
-				//
         // Go to Deep Sleep.
-			  //
         //
         am_hal_sysctrl_sleep(AM_HAL_SYSCTRL_SLEEP_DEEP);
     }
