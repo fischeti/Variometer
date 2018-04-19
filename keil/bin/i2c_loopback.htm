@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\bin\i2c_loopback.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\bin\i2c_loopback.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Thu Apr 19 12:32:08 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Thu Apr 19 12:38:40 2018
 <BR><P>
 <H3>Maximum Stack Usage =        332 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -195,8 +195,8 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_keil.o(RESET)
 </UL>
 <P><STRONG><a name="[2c]"></a>__main</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, __main.o(!!!main))
-<BR><BR>[Calls]<UL><LI><a href="#[30]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry
-<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload
+<BR><BR>[Calls]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload
+<LI><a href="#[30]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry
 </UL>
 
 <P><STRONG><a name="[2f]"></a>__scatterload</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __scatter.o(!!!scatter))
@@ -286,8 +286,8 @@ Global Symbols
 <P><STRONG><a name="[bf]"></a>__rt_lib_shutdown_user_alloc_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000C))
 
 <P><STRONG><a name="[30]"></a>__rt_entry</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry.o(.ARM.Collect$$rtentry$$00000000))
-<BR><BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
-<LI><a href="#[31]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload_rt2
+<BR><BR>[Called By]<UL><LI><a href="#[31]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload_rt2
+<LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
 </UL>
 
 <P><STRONG><a name="[c0]"></a>__rt_entry_presh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000002))
@@ -881,7 +881,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1c]"></a>am_stimer_cmpr0_isr</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, i2c_loopback.o(i.am_stimer_cmpr0_isr))
-<BR><BR>[Stack]<UL><LI>Max Depth = 304<LI>Call Chain = am_stimer_cmpr0_isr &rArr; pressure_sensor_read &rArr; am_hal_iom_i2c_write &rArr; am_hal_iom_i2c_write_nq &rArr; am_hal_i2c_bit_bang_send &rArr; i2c_send_byte &rArr; i2c_pull_and_wait_scl_hi
+<BR><BR>[Stack]<UL><LI>Max Depth = 296<LI>Call Chain = am_stimer_cmpr0_isr &rArr; pressure_sensor_read &rArr; am_hal_iom_i2c_write &rArr; am_hal_iom_i2c_write_nq &rArr; am_hal_i2c_bit_bang_send &rArr; i2c_send_byte &rArr; i2c_pull_and_wait_scl_hi
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
 <LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_stimer_int_clear
@@ -1022,8 +1022,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[7a]"></a>pressure_sensor_read</STRONG> (Thumb, 316 bytes, Stack size 64 bytes, i2c_loopback.o(i.pressure_sensor_read))
-<BR><BR>[Stack]<UL><LI>Max Depth = 288<LI>Call Chain = pressure_sensor_read &rArr; am_hal_iom_i2c_write &rArr; am_hal_iom_i2c_write_nq &rArr; am_hal_i2c_bit_bang_send &rArr; i2c_send_byte &rArr; i2c_pull_and_wait_scl_hi
+<P><STRONG><a name="[7a]"></a>pressure_sensor_read</STRONG> (Thumb, 300 bytes, Stack size 56 bytes, i2c_loopback.o(i.pressure_sensor_read))
+<BR><BR>[Stack]<UL><LI>Max Depth = 280<LI>Call Chain = pressure_sensor_read &rArr; am_hal_iom_i2c_write &rArr; am_hal_iom_i2c_write_nq &rArr; am_hal_i2c_bit_bang_send &rArr; i2c_send_byte &rArr; i2c_pull_and_wait_scl_hi
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
 <LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_i2c_write

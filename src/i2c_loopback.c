@@ -4,7 +4,6 @@
 //!
 //! @brief Example of dope ass pressure reading
 //!
-//! SWO is configured in 1M baud, 8-n-1 mode.
 //! @verbatim
 //! PIN Fly Lead Assumptions for the I/O Master (IOM) Board (the other one):
 //! IOM0
@@ -501,7 +500,7 @@ pressure_sensor_read(void)
 		// Calculate temperature and pressure values
 		//
 		int32_t dT =  data_temperature - (coeff[5] << 8);
-		int32_t TEMP = (2000 + ((dT*coeff[6]) >> 23));
+		// int32_t TEMP = (2000 + ((dT*coeff[6]) >> 23));
 		
 		int64_t OFF = (coeff[2] << 16) + ((coeff[4]*dT) >> 7);
 		int64_t SENS = (coeff[1] << 15) + ((coeff[3]*dT) >> 8);

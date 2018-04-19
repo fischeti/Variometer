@@ -1027,34 +1027,34 @@ Image Symbol Table
     padbuffer                                0x0000365f   Thumb Code    34  am_util_stdio.o(i.padbuffer)
     i.pressure_sensor_init                   0x00003680   Section        0  i2c_loopback.o(i.pressure_sensor_init)
     i.pressure_sensor_read                   0x00003780   Section        0  i2c_loopback.o(i.pressure_sensor_read)
-    i.setBuckZX                              0x000038c0   Section        0  am_hal_sysctrl.o(i.setBuckZX)
-    setBuckZX                                0x000038c1   Thumb Code   112  am_hal_sysctrl.o(i.setBuckZX)
-    i.simple_strlen                          0x00003938   Section        0  am_util_stdio.o(i.simple_strlen)
-    simple_strlen                            0x00003939   Thumb Code    24  am_util_stdio.o(i.simple_strlen)
-    i.stimer_init                            0x00003950   Section        0  i2c_loopback.o(i.stimer_init)
-    i.uint64_to_hexstr                       0x0000397a   Section        0  am_util_stdio.o(i.uint64_to_hexstr)
-    uint64_to_hexstr                         0x0000397b   Thumb Code   138  am_util_stdio.o(i.uint64_to_hexstr)
-    i.uint64_to_str                          0x00003a04   Section        0  am_util_stdio.o(i.uint64_to_str)
-    uint64_to_str                            0x00003a05   Thumb Code   112  am_util_stdio.o(i.uint64_to_str)
-    x$fpl$d2f                                0x00003a74   Section       98  d2f.o(x$fpl$d2f)
-    $v0                                      0x00003a74   Number         0  d2f.o(x$fpl$d2f)
-    x$fpl$dnaninf                            0x00003ad6   Section      156  dnaninf.o(x$fpl$dnaninf)
-    $v0                                      0x00003ad6   Number         0  dnaninf.o(x$fpl$dnaninf)
-    x$fpl$dretinf                            0x00003b72   Section       12  dretinf.o(x$fpl$dretinf)
-    $v0                                      0x00003b72   Number         0  dretinf.o(x$fpl$dretinf)
-    x$fpl$f2d                                0x00003b80   Section       86  f2d.o(x$fpl$f2d)
-    $v0                                      0x00003b80   Number         0  f2d.o(x$fpl$f2d)
-    x$fpl$fnaninf                            0x00003bd6   Section      140  fnaninf.o(x$fpl$fnaninf)
-    $v0                                      0x00003bd6   Number         0  fnaninf.o(x$fpl$fnaninf)
-    x$fpl$fpinit                             0x00003c62   Section       10  fpinit.o(x$fpl$fpinit)
-    $v0                                      0x00003c62   Number         0  fpinit.o(x$fpl$fpinit)
-    x$fpl$fretinf                            0x00003c6c   Section       10  fretinf.o(x$fpl$fretinf)
-    $v0                                      0x00003c6c   Number         0  fretinf.o(x$fpl$fretinf)
-    x$fpl$usenofp                            0x00003c76   Section        0  usenofp.o(x$fpl$usenofp)
-    .constdata                               0x00003c78   Section      492  i2c_loopback.o(.constdata)
-    ASCII                                    0x00003c78   Data         480  i2c_loopback.o(.constdata)
-    .constdata                               0x00003e64   Section       12  am_hal_cachectrl.o(.constdata)
-    .constdata                               0x00003e70   Section       65  am_hal_iom.o(.constdata)
+    i.setBuckZX                              0x000038b0   Section        0  am_hal_sysctrl.o(i.setBuckZX)
+    setBuckZX                                0x000038b1   Thumb Code   112  am_hal_sysctrl.o(i.setBuckZX)
+    i.simple_strlen                          0x00003928   Section        0  am_util_stdio.o(i.simple_strlen)
+    simple_strlen                            0x00003929   Thumb Code    24  am_util_stdio.o(i.simple_strlen)
+    i.stimer_init                            0x00003940   Section        0  i2c_loopback.o(i.stimer_init)
+    i.uint64_to_hexstr                       0x0000396a   Section        0  am_util_stdio.o(i.uint64_to_hexstr)
+    uint64_to_hexstr                         0x0000396b   Thumb Code   138  am_util_stdio.o(i.uint64_to_hexstr)
+    i.uint64_to_str                          0x000039f4   Section        0  am_util_stdio.o(i.uint64_to_str)
+    uint64_to_str                            0x000039f5   Thumb Code   112  am_util_stdio.o(i.uint64_to_str)
+    x$fpl$d2f                                0x00003a64   Section       98  d2f.o(x$fpl$d2f)
+    $v0                                      0x00003a64   Number         0  d2f.o(x$fpl$d2f)
+    x$fpl$dnaninf                            0x00003ac6   Section      156  dnaninf.o(x$fpl$dnaninf)
+    $v0                                      0x00003ac6   Number         0  dnaninf.o(x$fpl$dnaninf)
+    x$fpl$dretinf                            0x00003b62   Section       12  dretinf.o(x$fpl$dretinf)
+    $v0                                      0x00003b62   Number         0  dretinf.o(x$fpl$dretinf)
+    x$fpl$f2d                                0x00003b70   Section       86  f2d.o(x$fpl$f2d)
+    $v0                                      0x00003b70   Number         0  f2d.o(x$fpl$f2d)
+    x$fpl$fnaninf                            0x00003bc6   Section      140  fnaninf.o(x$fpl$fnaninf)
+    $v0                                      0x00003bc6   Number         0  fnaninf.o(x$fpl$fnaninf)
+    x$fpl$fpinit                             0x00003c52   Section       10  fpinit.o(x$fpl$fpinit)
+    $v0                                      0x00003c52   Number         0  fpinit.o(x$fpl$fpinit)
+    x$fpl$fretinf                            0x00003c5c   Section       10  fretinf.o(x$fpl$fretinf)
+    $v0                                      0x00003c5c   Number         0  fretinf.o(x$fpl$fretinf)
+    x$fpl$usenofp                            0x00003c66   Section        0  usenofp.o(x$fpl$usenofp)
+    .constdata                               0x00003c68   Section      492  i2c_loopback.o(.constdata)
+    ASCII                                    0x00003c68   Data         480  i2c_loopback.o(.constdata)
+    .constdata                               0x00003e54   Section       12  am_hal_cachectrl.o(.constdata)
+    .constdata                               0x00003e60   Section       65  am_hal_iom.o(.constdata)
     .data                                    0x10000000   Section      108  i2c_loopback.o(.data)
     g_sIOMI2cConfig_i2c                      0x10000060   Data          12  i2c_loopback.o(.data)
     .data                                    0x1000006c   Section        5  am_util_stdio.o(.data)
@@ -1298,27 +1298,27 @@ Image Symbol Table
     kalman_filter                            0x000033dd   Thumb Code   376  i2c_loopback.o(i.kalman_filter)
     main                                     0x0000356d   Thumb Code    74  i2c_loopback.o(i.main)
     pressure_sensor_init                     0x00003681   Thumb Code   166  i2c_loopback.o(i.pressure_sensor_init)
-    pressure_sensor_read                     0x00003781   Thumb Code   316  i2c_loopback.o(i.pressure_sensor_read)
-    stimer_init                              0x00003951   Thumb Code    42  i2c_loopback.o(i.stimer_init)
-    __aeabi_d2f                              0x00003a75   Thumb Code     0  d2f.o(x$fpl$d2f)
-    _d2f                                     0x00003a75   Thumb Code    98  d2f.o(x$fpl$d2f)
-    __fpl_dnaninf                            0x00003ad7   Thumb Code   156  dnaninf.o(x$fpl$dnaninf)
-    __fpl_dretinf                            0x00003b73   Thumb Code    12  dretinf.o(x$fpl$dretinf)
-    __aeabi_f2d                              0x00003b81   Thumb Code     0  f2d.o(x$fpl$f2d)
-    _f2d                                     0x00003b81   Thumb Code    86  f2d.o(x$fpl$f2d)
-    __fpl_fnaninf                            0x00003bd7   Thumb Code   140  fnaninf.o(x$fpl$fnaninf)
-    _fp_init                                 0x00003c63   Thumb Code    10  fpinit.o(x$fpl$fpinit)
-    __fplib_config_fpu_vfp                   0x00003c6b   Thumb Code     0  fpinit.o(x$fpl$fpinit)
-    __fplib_config_pureend_doubles           0x00003c6b   Thumb Code     0  fpinit.o(x$fpl$fpinit)
-    __fpl_fretinf                            0x00003c6d   Thumb Code    10  fretinf.o(x$fpl$fretinf)
-    __I$use$fp                               0x00003c76   Number         0  usenofp.o(x$fpl$usenofp)
-    g_sIOMConfig_spi                         0x00003e58   Data          12  i2c_loopback.o(.constdata)
-    am_hal_cachectrl_defaults                0x00003e64   Data          12  am_hal_cachectrl.o(.constdata)
-    i2c_bb_errmap                            0x00003e70   Data           5  am_hal_iom.o(.constdata)
-    g_IOMPads                                0x00003e75   Data          39  am_hal_iom.o(.constdata)
-    g_I2CPads                                0x00003e9c   Data          21  am_hal_iom.o(.constdata)
-    Region$$Table$$Base                      0x00003eb4   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x00003ed4   Number         0  anon$$obj.o(Region$$Table)
+    pressure_sensor_read                     0x00003781   Thumb Code   300  i2c_loopback.o(i.pressure_sensor_read)
+    stimer_init                              0x00003941   Thumb Code    42  i2c_loopback.o(i.stimer_init)
+    __aeabi_d2f                              0x00003a65   Thumb Code     0  d2f.o(x$fpl$d2f)
+    _d2f                                     0x00003a65   Thumb Code    98  d2f.o(x$fpl$d2f)
+    __fpl_dnaninf                            0x00003ac7   Thumb Code   156  dnaninf.o(x$fpl$dnaninf)
+    __fpl_dretinf                            0x00003b63   Thumb Code    12  dretinf.o(x$fpl$dretinf)
+    __aeabi_f2d                              0x00003b71   Thumb Code     0  f2d.o(x$fpl$f2d)
+    _f2d                                     0x00003b71   Thumb Code    86  f2d.o(x$fpl$f2d)
+    __fpl_fnaninf                            0x00003bc7   Thumb Code   140  fnaninf.o(x$fpl$fnaninf)
+    _fp_init                                 0x00003c53   Thumb Code    10  fpinit.o(x$fpl$fpinit)
+    __fplib_config_fpu_vfp                   0x00003c5b   Thumb Code     0  fpinit.o(x$fpl$fpinit)
+    __fplib_config_pureend_doubles           0x00003c5b   Thumb Code     0  fpinit.o(x$fpl$fpinit)
+    __fpl_fretinf                            0x00003c5d   Thumb Code    10  fretinf.o(x$fpl$fretinf)
+    __I$use$fp                               0x00003c66   Number         0  usenofp.o(x$fpl$usenofp)
+    g_sIOMConfig_spi                         0x00003e48   Data          12  i2c_loopback.o(.constdata)
+    am_hal_cachectrl_defaults                0x00003e54   Data          12  am_hal_cachectrl.o(.constdata)
+    i2c_bb_errmap                            0x00003e60   Data           5  am_hal_iom.o(.constdata)
+    g_IOMPads                                0x00003e65   Data          39  am_hal_iom.o(.constdata)
+    g_I2CPads                                0x00003e8c   Data          21  am_hal_iom.o(.constdata)
+    Region$$Table$$Base                      0x00003ea4   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x00003ec4   Number         0  anon$$obj.o(Region$$Table)
     data_pressure                            0x10000000   Data           4  i2c_loopback.o(.data)
     data_temperature                         0x10000004   Data           4  i2c_loopback.o(.data)
     dt                                       0x10000008   Data           4  i2c_loopback.o(.data)
@@ -1350,9 +1350,9 @@ Memory Map of the image
 
   Image Entry point : 0x000000e9
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x00003ffc, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x00003fec, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region FLASH (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x00003ed4, Max: 0x00100000, ABSOLUTE)
+    Execution Region FLASH (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x00003ec4, Max: 0x00100000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -1502,48 +1502,48 @@ Memory Map of the image
     0x00003624   0x00003624   0x0000003a   Code   RO          342    i.ndigits_in_u64    am_util_stdio.o
     0x0000365e   0x0000365e   0x00000022   Code   RO          343    i.padbuffer         am_util_stdio.o
     0x00003680   0x00003680   0x00000100   Code   RO            8    i.pressure_sensor_init  i2c_loopback.o
-    0x00003780   0x00003780   0x00000140   Code   RO            9    i.pressure_sensor_read  i2c_loopback.o
-    0x000038c0   0x000038c0   0x00000078   Code   RO          801    i.setBuckZX         libam_hal.lib(am_hal_sysctrl.o)
-    0x00003938   0x00003938   0x00000018   Code   RO          344    i.simple_strlen     am_util_stdio.o
-    0x00003950   0x00003950   0x0000002a   Code   RO           10    i.stimer_init       i2c_loopback.o
-    0x0000397a   0x0000397a   0x0000008a   Code   RO          345    i.uint64_to_hexstr  am_util_stdio.o
-    0x00003a04   0x00003a04   0x00000070   Code   RO          346    i.uint64_to_str     am_util_stdio.o
-    0x00003a74   0x00003a74   0x00000062   Code   RO         1058    x$fpl$d2f           fz_wm.l(d2f.o)
-    0x00003ad6   0x00003ad6   0x0000009c   Code   RO         1063    x$fpl$dnaninf       fz_wm.l(dnaninf.o)
-    0x00003b72   0x00003b72   0x0000000c   Code   RO         1065    x$fpl$dretinf       fz_wm.l(dretinf.o)
-    0x00003b7e   0x00003b7e   0x00000002   PAD
-    0x00003b80   0x00003b80   0x00000056   Code   RO         1060    x$fpl$f2d           fz_wm.l(f2d.o)
-    0x00003bd6   0x00003bd6   0x0000008c   Code   RO         1067    x$fpl$fnaninf       fz_wm.l(fnaninf.o)
-    0x00003c62   0x00003c62   0x0000000a   Code   RO         1156    x$fpl$fpinit        fz_wm.l(fpinit.o)
-    0x00003c6c   0x00003c6c   0x0000000a   Code   RO         1069    x$fpl$fretinf       fz_wm.l(fretinf.o)
-    0x00003c76   0x00003c76   0x00000000   Code   RO         1071    x$fpl$usenofp       fz_wm.l(usenofp.o)
-    0x00003c76   0x00003c76   0x00000002   PAD
-    0x00003c78   0x00003c78   0x000001ec   Data   RO           12    .constdata          i2c_loopback.o
-    0x00003e64   0x00003e64   0x0000000c   Data   RO          507    .constdata          libam_hal.lib(am_hal_cachectrl.o)
-    0x00003e70   0x00003e70   0x00000041   Data   RO          676    .constdata          libam_hal.lib(am_hal_iom.o)
-    0x00003eb1   0x00003eb1   0x00000003   PAD
-    0x00003eb4   0x00003eb4   0x00000020   Data   RO         1224    Region$$Table       anon$$obj.o
+    0x00003780   0x00003780   0x00000130   Code   RO            9    i.pressure_sensor_read  i2c_loopback.o
+    0x000038b0   0x000038b0   0x00000078   Code   RO          801    i.setBuckZX         libam_hal.lib(am_hal_sysctrl.o)
+    0x00003928   0x00003928   0x00000018   Code   RO          344    i.simple_strlen     am_util_stdio.o
+    0x00003940   0x00003940   0x0000002a   Code   RO           10    i.stimer_init       i2c_loopback.o
+    0x0000396a   0x0000396a   0x0000008a   Code   RO          345    i.uint64_to_hexstr  am_util_stdio.o
+    0x000039f4   0x000039f4   0x00000070   Code   RO          346    i.uint64_to_str     am_util_stdio.o
+    0x00003a64   0x00003a64   0x00000062   Code   RO         1058    x$fpl$d2f           fz_wm.l(d2f.o)
+    0x00003ac6   0x00003ac6   0x0000009c   Code   RO         1063    x$fpl$dnaninf       fz_wm.l(dnaninf.o)
+    0x00003b62   0x00003b62   0x0000000c   Code   RO         1065    x$fpl$dretinf       fz_wm.l(dretinf.o)
+    0x00003b6e   0x00003b6e   0x00000002   PAD
+    0x00003b70   0x00003b70   0x00000056   Code   RO         1060    x$fpl$f2d           fz_wm.l(f2d.o)
+    0x00003bc6   0x00003bc6   0x0000008c   Code   RO         1067    x$fpl$fnaninf       fz_wm.l(fnaninf.o)
+    0x00003c52   0x00003c52   0x0000000a   Code   RO         1156    x$fpl$fpinit        fz_wm.l(fpinit.o)
+    0x00003c5c   0x00003c5c   0x0000000a   Code   RO         1069    x$fpl$fretinf       fz_wm.l(fretinf.o)
+    0x00003c66   0x00003c66   0x00000000   Code   RO         1071    x$fpl$usenofp       fz_wm.l(usenofp.o)
+    0x00003c66   0x00003c66   0x00000002   PAD
+    0x00003c68   0x00003c68   0x000001ec   Data   RO           12    .constdata          i2c_loopback.o
+    0x00003e54   0x00003e54   0x0000000c   Data   RO          507    .constdata          libam_hal.lib(am_hal_cachectrl.o)
+    0x00003e60   0x00003e60   0x00000041   Data   RO          676    .constdata          libam_hal.lib(am_hal_iom.o)
+    0x00003ea1   0x00003ea1   0x00000003   PAD
+    0x00003ea4   0x00003ea4   0x00000020   Data   RO         1224    Region$$Table       anon$$obj.o
 
 
-    Execution Region SRAM (Exec base: 0x10000000, Load base: 0x00003ed4, Size: 0x00001470, Max: 0x00040000, ABSOLUTE)
+    Execution Region SRAM (Exec base: 0x10000000, Load base: 0x00003ec4, Size: 0x00001470, Max: 0x00040000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x10000000   0x00003ed4   0x0000006c   Data   RW           13    .data               i2c_loopback.o
-    0x1000006c   0x00003f40   0x00000005   Data   RW          348    .data               am_util_stdio.o
-    0x10000071   0x00003f45   0x00000003   PAD
-    0x10000074   0x00003f48   0x00000004   Data   RW          462    .data               libam_hal.lib(am_hal_global.o)
-    0x10000078   0x00003f4c   0x00000030   Data   RW          481    .data               libam_bsp.lib(am_bsp.o)
-    0x100000a8   0x00003f7c   0x00000050   Data   RW          579    .data               libam_hal.lib(am_hal_flash.o)
-    0x100000f8   0x00003fcc   0x00000012   Data   RW          677    .data               libam_hal.lib(am_hal_iom.o)
-    0x1000010a   0x00003fde   0x00000002   PAD
-    0x1000010c   0x00003fe0   0x0000001c   Data   RW          803    .data               libam_hal.lib(am_hal_sysctrl.o)
+    0x10000000   0x00003ec4   0x0000006c   Data   RW           13    .data               i2c_loopback.o
+    0x1000006c   0x00003f30   0x00000005   Data   RW          348    .data               am_util_stdio.o
+    0x10000071   0x00003f35   0x00000003   PAD
+    0x10000074   0x00003f38   0x00000004   Data   RW          462    .data               libam_hal.lib(am_hal_global.o)
+    0x10000078   0x00003f3c   0x00000030   Data   RW          481    .data               libam_bsp.lib(am_bsp.o)
+    0x100000a8   0x00003f6c   0x00000050   Data   RW          579    .data               libam_hal.lib(am_hal_flash.o)
+    0x100000f8   0x00003fbc   0x00000012   Data   RW          677    .data               libam_hal.lib(am_hal_iom.o)
+    0x1000010a   0x00003fce   0x00000002   PAD
+    0x1000010c   0x00003fd0   0x0000001c   Data   RW          803    .data               libam_hal.lib(am_hal_sysctrl.o)
     0x10000128        -       0x00000020   Zero   RW           11    .bss                i2c_loopback.o
     0x10000148        -       0x00000100   Zero   RW          347    .bss                am_util_stdio.o
     0x10000248        -       0x00000198   Zero   RW          675    .bss                libam_hal.lib(am_hal_iom.o)
     0x100003e0        -       0x0000002c   Zero   RW          897    .bss                libam_hal.lib(am_hal_i2c_bit_bang.o)
     0x1000040c        -       0x00000060   Zero   RW         1098    .bss                c_w.l(libspace.o)
-    0x1000046c   0x00003ffc   0x00000004   PAD
+    0x1000046c   0x00003fec   0x00000004   PAD
     0x10000470        -       0x00000000   Zero   RW          453    HEAP                startup_keil.o
     0x10000470        -       0x00001000   Zero   RW          452    STACK               startup_keil.o
 
@@ -1558,11 +1558,11 @@ Image component sizes
         60          6          0          0          0       1262   am_util_delay.o
        204          6          0          0          0       2080   am_util_faultisr.o
       2104         58          0          5        256      12708   am_util_stdio.o
-      2298        194        492        108         32      20137   i2c_loopback.o
+      2282        194        492        108         32      20113   i2c_loopback.o
        256        210          0          0       4096        996   startup_keil.o
 
     ----------------------------------------------------------------------
-      4924        474        524        116       4384      37183   Object Totals
+      4908        474        524        116       4384      37159   Object Totals
          0          0         32          0          0          0   (incl. Generated)
          2          0          0          3          0          0   (incl. Padding)
 
@@ -1642,15 +1642,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     15480       1564        604        296       4936      37719   Grand Totals
-     15480       1564        604        296       4936      37719   ELF Image Totals
-     15480       1564        604        296          0          0   ROM Totals
+     15464       1564        604        296       4936      37695   Grand Totals
+     15464       1564        604        296       4936      37695   ELF Image Totals
+     15464       1564        604        296          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                16084 (  15.71kB)
+    Total RO  Size (Code + RO Data)                16068 (  15.69kB)
     Total RW  Size (RW Data + ZI Data)              5232 (   5.11kB)
-    Total ROM Size (Code + RO Data + RW Data)      16380 (  16.00kB)
+    Total ROM Size (Code + RO Data + RW Data)      16364 (  15.98kB)
 
 ==============================================================================
 
