@@ -1,6 +1,7 @@
 #include "am_mcu_apollo.h"
 #include "am_bsp.h"
 #include "am_util.h"
+#include "inttypes.h"
 
 //*****************************************************************************
 //
@@ -19,47 +20,84 @@
 
 //*****************************************************************************
 //
-// Buzz frequency profile, gives Dutycycle for Pulse
+// Buzz frequency, gives Dutycycle for Pulse
 //
 //*****************************************************************************
-volatile uint32_t g_ui32Index = 0;
-const uint32_t g_pui32Buzzness[64] =
-{
-    1, 1, 1, 2, 3, 4, 6, 8,
-    10, 12, 14, 17, 20, 23, 25, 28,
-    31, 35, 38, 40, 43, 46, 49, 51,
-    53, 55, 57, 59, 60, 61, 62, 62,
-    63, 62, 62, 61, 60, 59, 57, 55,
-    53, 51, 49, 46, 43, 40, 38, 35,
-    32, 28, 25, 23, 20, 17, 14, 12,
-    10, 8, 6, 4, 3, 2, 1, 1
-};
+float buzzer_frequency = 1200;
+uint32_t buzzer_timer_counter = 10, buzzer_duty_cycle = 5;
+uint32_t toggle_bit = 0;
 
 //*****************************************************************************
 //
-// Init function for Timer A0.
+// Initalize CTimer function.
+//
+//*****************************************************************************
+void
+init_cTimer()
+{
+		//
+    // Clear the terminal and print the banner.
+    //
+    am_util_stdio_terminal_clear();
+    am_util_stdio_printf("PWM ON BUZZER\n\n");
+    am_util_delay_ms(10);
+
+    //
+    // Configure a timer to drive the BUZZER.
+    //
+    am_hal_ctimer_config_single(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA, (AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_HFRC_12KHZ |AM_HAL_CTIMER_INT_ENABLE | AM_HAL_CTIMER_PIN_ENABLE));
+
+    //
+    // Set up initial timer period.
+    //
+    am_hal_ctimer_period_set(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA, 64, 32);
+
+    //
+    // Enable interrupts for the Timer we are using on this board.
+    //
+    am_hal_ctimer_int_enable(AM_HAL_CTIMER_INT_TIMERA0);
+    am_hal_interrupt_enable(AM_HAL_INTERRUPT_CTIMER);
+    am_hal_interrupt_master_enable();
+		
+		
+		//
+		//Calculate Counter value regarding to Frequency
+		//
+		
+		float period_time = 1.0 / 12000;
+		float float_buzzer_timer_counter = (int)(1 / (buzzer_frequency * period_time));
+		float float_buzzer_duty_cycle = float_buzzer_timer_counter / 2;
+		
+		buzzer_timer_counter = (int) float_buzzer_timer_counter - 1;
+		buzzer_duty_cycle = (int) float_buzzer_duty_cycle;
+		
+}
+
+//*****************************************************************************
+//
+// Init function for Timer B1.
 //
 //*****************************************************************************
 void
 stimer_init(void)
 {
     //
-    // Enable compare A interrupt in STIMER
+    // Enable compare B interrupt in STIMER
     //
-    am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREA);
+    am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREB);
 
     //
     // Enable the timer interrupt in the NVIC.
     //
-    am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR0);
+    am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR1);
 
     //
     // Configure the STIMER and run
     //
     am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
-    am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
+    am_hal_stimer_compare_delta_set(1, WAKE_INTERVAL);
     am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ |
-                         AM_HAL_STIMER_CFG_COMPARE_A_ENABLE);
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE);
 
 }
 
@@ -69,18 +107,27 @@ stimer_init(void)
 //
 //*****************************************************************************
 void
-am_stimer_cmpr0_isr(void)
+am_stimer_cmpr1_isr(void)
 {
     //
     // Check the timer interrupt status.
     //
-    am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREA);
-    am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
+    am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREB);
+    am_hal_stimer_compare_delta_set(1, WAKE_INTERVAL);
 
+		//
+    // Toggle the cTimer.
     //
-    // Toggle LED 0.
-    //
-    am_devices_led_toggle(am_bsp_psLEDs, 0);
+	
+		toggle_bit = !toggle_bit;
+		
+		if(toggle_bit){
+    am_hal_ctimer_start(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
+		}	
+		
+		else{
+		am_hal_ctimer_clear(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
+		}
 }
 
 
@@ -100,59 +147,11 @@ am_ctimer_isr(void)
     //
     // Now set new PWM half-period for the BUZZER.
     //
-    am_hal_ctimer_period_set(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA, 64, g_pui32Buzzness[g_ui32Index]);
-
-    //
-    // Set up the BUZZER duty cycle for the next pulse.
-    //
-    g_ui32Index = (g_ui32Index + 1) % 64;
 	
-//		am_util_stdio_printf("Buzzer_Interrupt occured!\n\n");
-//		am_util_stdio_printf("%d\n", g_pui32Buzzness[g_ui32Index]);
-//    am_util_delay_ms(2);
+    am_hal_ctimer_period_set(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA, buzzer_timer_counter, buzzer_duty_cycle);
 }
 
 
-//*****************************************************************************
-//
-// Initalize CTimer function.
-//
-//*****************************************************************************
-void
-init_cTimer()
-{
-	//
-    // Clear the terminal and print the banner.
-    //
-    am_util_stdio_terminal_clear();
-    am_util_stdio_printf("PWM ON BUZZER\n\n");
-    am_util_delay_ms(10);
-
-    //
-    // Configure a timer to drive the BUZZER.
-    //
-    am_hal_ctimer_config_single(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA, (AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_LFRC_512HZ |AM_HAL_CTIMER_INT_ENABLE | AM_HAL_CTIMER_PIN_ENABLE));
-
-    //
-    // Set up initial timer period.
-    //
-    am_hal_ctimer_period_set(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA, 64, 32);
-
-    //
-    // Enable interrupts for the Timer we are using on this board.
-    //
-    am_hal_ctimer_int_enable(AM_HAL_CTIMER_INT_TIMERA0);
-    am_hal_interrupt_enable(AM_HAL_INTERRUPT_CTIMER);
-    am_hal_interrupt_master_enable();
-
-    //
-    // Start the timer.
-    //
-    am_hal_ctimer_start(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
-		
-		am_util_stdio_printf("Buzzer_PWM_Timer has started\n\n");
-    am_util_delay_ms(2);
-}
 
 //*****************************************************************************
 //
@@ -205,19 +204,19 @@ main(void)
     //
     // Clear the terminal and print the banner.
     //
-//    am_util_stdio_terminal_clear();
-//    am_util_stdio_printf("STimer Example DUDE\n");
-//    am_util_delay_ms(10);
+    am_util_stdio_terminal_clear();
+    am_util_stdio_printf("PWM once a second\n");
+    am_util_delay_ms(10);
 
     //
     // STIMER init.
     //
-//    stimer_init();
+    stimer_init();
 
     //
     // Enable the timer interrupt in the NVIC.
     //
-//    am_hal_interrupt_master_enable();
+    am_hal_interrupt_master_enable();
 
     //
     // We are done printing. Disable debug printf messages on ITM.
@@ -242,9 +241,7 @@ main(void)
     while (1)
     {
         //
-				//
         // Go to Deep Sleep.
-			  //
         //
         am_hal_sysctrl_sleep(AM_HAL_SYSCTRL_SLEEP_DEEP);
     }
