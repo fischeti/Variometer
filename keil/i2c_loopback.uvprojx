@@ -385,6 +385,11 @@
               <FileType>1</FileType>
               <FilePath>../src/i2c_loopback.c</FilePath>
             </File>
+            <File>
+              <FileName>pwm_stuff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\pwm_stuff.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
