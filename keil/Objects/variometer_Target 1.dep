@@ -1,0 +1,2 @@
+Dependencies for Project 'variometer', Target 'Target 1': (DO NOT MODIFY !)
+F (..\..\i2c_loopback\src\i2c_loopback.c)(0x5A1EEE90)(--c99 -c --cpu Cortex-M4.fp -D__EVAL -g -O0 --apcs=interwork --split_sections-I.\RTE\_Target_1-IC:\Keil_v5\ARM\PACK\AmbiqMicro\Apollo_DFP\1.0.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DAPOLLO2_1024-o .\objects\i2c_loopback.o --omf_browse .\objects\i2c_loopback.crf --depend .\objects\i2c_loopback.d)
