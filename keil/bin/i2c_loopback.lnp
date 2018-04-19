@@ -1,6 +1,5 @@
 --cpu=Cortex-M4.fp
 ".\bin\i2c_loopback.o"
-".\bin\pwm_stuff.o"
 ".\bin\am_util_delay.o"
 ".\bin\am_util_stdio.o"
 ".\bin\am_util_faultisr.o"
