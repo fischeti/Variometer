@@ -73,3 +73,4 @@
 .\bin\i2c_loopback.o: ../../../../../utils/am_util_string.h
 .\bin\i2c_loopback.o: ../../../../../utils/am_util_time.h
 .\bin\i2c_loopback.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
+.\bin\i2c_loopback.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

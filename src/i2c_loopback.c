@@ -57,6 +57,7 @@
 #include "am_bsp.h"
 #include "am_util.h"
 #include "inttypes.h"
+#include "math.h"
 
 
 //*****************************************************************************
@@ -65,7 +66,7 @@
 //
 //*****************************************************************************
 
-#define WAKE_INTERVAL_IN_MS     10
+#define WAKE_INTERVAL_IN_MS     100
 #define XT_PERIOD               32768
 #define WAKE_INTERVAL           XT_PERIOD * WAKE_INTERVAL_IN_MS * 1e-3
 #define IOM_MODULE_I2C     			0 // This will have a side benefit of testing IOM4 in offset mode
@@ -100,6 +101,7 @@
 uint32_t data_pressure = 0;
 uint32_t data_temperature = 0;
 uint32_t coeff[] = {0,0,0,0,0,0,0,0};
+int32_t pressure_and_temperature[] = {0,0};
 static const uint8_t ASCII[][5] =
 {
  {0x00, 0x00, 0x00, 0x00, 0x00} // 20  
@@ -208,7 +210,7 @@ static const uint8_t ASCII[][5] =
 //*****************************************************************************
 float dt = WAKE_INTERVAL_IN_MS;
 float xt[] = {0, 0};
-float P[] = {12, 0, 0, 12};
+float P[] = {158806, 107, 124, 0.157};
 float A[] = {1, 100, 0, 1};
 float H[] = {1, 0};
 float R = 1000000;
@@ -226,10 +228,11 @@ void am_iomaster0_isr(void);
 void itm_start(void);
 static void iom_set_up(void);
 void pressure_sensor_init(void);
-int32_t pressure_sensor_read(void);
+void pressure_sensor_read(void);
 void kalman_filter(int32_t data);
 void display_init(void);
 void LcdString(char *characters, uint8_t x, uint8_t y);
+float calc_velocity(float x_new, float x_old, float temp);
 
 //*****************************************************************************
 //
@@ -276,13 +279,18 @@ am_stimer_cmpr0_isr(void)
     //
     // Read the pressure data
     //
-		int32_t pressure = pressure_sensor_read();
+		pressure_sensor_read();
 	
-		kalman_filter(pressure);
+		float x_old = xt[0];
+	
+		kalman_filter(data_pressure);
 		
 		// am_util_stdio_printf("\npressure: ");
 		am_util_stdio_printf("%f" " ", xt[0]);
-		am_util_stdio_printf("%d" "\n", pressure);
+		am_util_stdio_printf("%f" " ", xt[1]);
+		am_util_stdio_printf("%d" " ", data_pressure);
+	
+		float velocity = calc_velocity(xt[0], x_old, data_temperature);
 }
 
 
@@ -447,7 +455,7 @@ pressure_sensor_init(void)
 //
 //*****************************************************************************	
 	
-int32_t
+void
 pressure_sensor_read(void)
 {
 		uint32_t receive_data_pressure = 0;
@@ -493,14 +501,14 @@ pressure_sensor_read(void)
 		//
 		// Invert LSBs and MSBs
 		//
-		uint32_t data_pressure = ((receive_data_pressure & 0x000000FF) << 16) | ((receive_data_pressure & 0x0000FF00)) | ((receive_data_pressure & 0x00FF0000) >> 16);
-		uint32_t data_temperature = ((receive_data_temperature & 0x000000FF) << 16) | ((receive_data_temperature & 0x0000FF00)) | ((receive_data_temperature & 0x00FF0000) >> 16);
+		data_pressure = ((receive_data_pressure & 0x000000FF) << 16) | ((receive_data_pressure & 0x0000FF00)) | ((receive_data_pressure & 0x00FF0000) >> 16);
+		data_temperature = ((receive_data_temperature & 0x000000FF) << 16) | ((receive_data_temperature & 0x0000FF00)) | ((receive_data_temperature & 0x00FF0000) >> 16);
 
 		//
 		// Calculate temperature and pressure values
 		//
 		int32_t dT =  data_temperature - (coeff[5] << 8);
-		// int32_t TEMP = (2000 + ((dT*coeff[6]) >> 23));
+		int32_t TEMP = (2000 + ((dT*coeff[6]) >> 23));
 		
 		int64_t OFF = (coeff[2] << 16) + ((coeff[4]*dT) >> 7);
 		int64_t SENS = (coeff[1] << 15) + ((coeff[3]*dT) >> 8);
@@ -511,7 +519,8 @@ pressure_sensor_read(void)
 //		am_util_stdio_printf("\ntemperature: ");
 //		am_util_stdio_printf("%d", TEMP);
 		
-		return (int32_t)P;
+		data_pressure = (int32_t)P;
+		data_temperature = TEMP;
 }
 //*****************************************************************************
 //
@@ -615,6 +624,25 @@ LcdString(char *characters, uint8_t x, uint8_t y)
   }
 }
 
+//*****************************************************************************
+//
+// Calculate vertical velocity
+//
+//*****************************************************************************
+float
+calc_velocity(float x_new, float x_old, float temp)
+{
+		float sea_press = 101325;
+		float altitude_new = 44330.0f * (1.0f - pow(x_new / sea_press, 0.1902949f));
+		float altitude_old = 44330.0f * (1.0f - pow(x_old / sea_press, 0.1902949f));
+	
+		float diff_altitude = altitude_new - altitude_old;
+		float vertical_speed = diff_altitude/WAKE_INTERVAL_IN_MS*1000;
+	
+		am_util_stdio_printf("%f" "\n", vertical_speed);
+	
+		return vertical_speed;
+}
 //*****************************************************************************
 //
 // Main function.
