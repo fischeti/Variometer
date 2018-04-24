@@ -3,11 +3,11 @@
 <title>Static Call Graph - [.\bin\i2c_loopback.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\bin\i2c_loopback.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Thu Apr 19 16:05:32 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Tue Apr 24 10:00:41 2018
 <BR><P>
-<H3>Maximum Stack Usage =        372 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        384 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-am_stimer_cmpr0_isr &rArr; calc_velocity &rArr; am_util_stdio_printf &rArr; am_util_stdio_vsprintf &rArr; ftoa &rArr; uint64_to_str &rArr; divu64_10
+am_stimer_cmpr0_isr &rArr; calc_velocity &rArr; LcdString &rArr; am_hal_iom_spi_write &rArr; am_hal_iom_spi_write_nq &rArr; am_hal_iom_workaround_word_write &rArr; am_hal_iom_fifo_write
 <P>
 <H3>
 Mutually Recursive functions
@@ -334,7 +334,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_keil.o(RESET)
 </UL>
-<P><STRONG><a name="[97]"></a>getStackedReg</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, am_util_faultisr.o(.emb_text))
+<P><STRONG><a name="[95]"></a>getStackedReg</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, am_util_faultisr.o(.emb_text))
 <BR><BR>[Called By]<UL><LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_faultisr_collect_data
 </UL>
 
@@ -372,7 +372,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_setup_stackheap
 </UL>
 
-<P><STRONG><a name="[96]"></a>__aeabi_memclr4</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text))
+<P><STRONG><a name="[94]"></a>__aeabi_memclr4</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 4<LI>Call Chain = __aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_faultisr_collect_data
@@ -455,6 +455,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_spi_write
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
 </UL>
 
 <P><STRONG><a name="[5a]"></a>__ARM_fpclassify</STRONG> (Thumb, 48 bytes, Stack size 8 bytes, fpclassify.o(i.__ARM_fpclassify))
@@ -486,7 +487,7 @@ Global Symbols
 <LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
 <LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
 </UL>
-<BR>[Called By]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
+<BR>[Called By]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
 </UL>
 
 <P><STRONG><a name="[57]"></a>__kernel_poly</STRONG> (Thumb, 248 bytes, Stack size 24 bytes, poly.o(i.__kernel_poly))
@@ -586,8 +587,8 @@ Global Symbols
 
 <P><STRONG><a name="[71]"></a>am_hal_clkgen_sysclk_get</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, am_hal_clkgen.o(i.am_hal_clkgen_sysclk_get))
 <BR><BR>[Called By]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_tpiu_enable
-<LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_us
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
+<LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_us
+<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
 <LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_config
 </UL>
 
@@ -632,8 +633,8 @@ Global Symbols
 <P><STRONG><a name="[6d]"></a>am_hal_flash_delay</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, am_hal_flash.o(i.am_hal_flash_delay))
 <BR><BR>[Called By]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_tpiu_enable
 <LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_pwrctrl_bucks_init
-<LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_us
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
+<LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_us
+<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_sysctrl_sleep
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;i2c_send_byte
 <LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;i2c_pull_and_wait_scl_hi
@@ -871,7 +872,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_bsp_itm_string_print
 </UL>
 
-<P><STRONG><a name="[98]"></a>am_hal_mcuctrl_fault_status</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, am_hal_mcuctrl.o(i.am_hal_mcuctrl_fault_status))
+<P><STRONG><a name="[96]"></a>am_hal_mcuctrl_fault_status</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, am_hal_mcuctrl.o(i.am_hal_mcuctrl_fault_status))
 <BR><BR>[Called By]<UL><LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_faultisr_collect_data
 </UL>
 
@@ -981,20 +982,18 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_bsp_low_power_init
 </UL>
 
-<P><STRONG><a name="[1d]"></a>am_stimer_cmpr0_isr</STRONG> (Thumb, 152 bytes, Stack size 24 bytes, i2c_loopback.o(i.am_stimer_cmpr0_isr))
-<BR><BR>[Stack]<UL><LI>Max Depth = 372<LI>Call Chain = am_stimer_cmpr0_isr &rArr; calc_velocity &rArr; am_util_stdio_printf &rArr; am_util_stdio_vsprintf &rArr; ftoa &rArr; uint64_to_str &rArr; divu64_10
+<P><STRONG><a name="[1d]"></a>am_stimer_cmpr0_isr</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, i2c_loopback.o(i.am_stimer_cmpr0_isr))
+<BR><BR>[Stack]<UL><LI>Max Depth = 384<LI>Call Chain = am_stimer_cmpr0_isr &rArr; calc_velocity &rArr; LcdString &rArr; am_hal_iom_spi_write &rArr; am_hal_iom_spi_write_nq &rArr; am_hal_iom_workaround_word_write &rArr; am_hal_iom_fifo_write
 </UL>
-<BR>[Calls]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
-<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_stimer_int_clear
+<BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_stimer_int_clear
 <LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_stimer_compare_delta_set
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_read
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;kalman_filter
-<LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
-<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_keil.o(RESET)
 </UL>
-<P><STRONG><a name="[94]"></a>am_util_delay_ms</STRONG> (Thumb, 28 bytes, Stack size 16 bytes, am_util_delay.o(i.am_util_delay_ms))
+<P><STRONG><a name="[92]"></a>am_util_delay_ms</STRONG> (Thumb, 28 bytes, Stack size 16 bytes, am_util_delay.o(i.am_util_delay_ms))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = am_util_delay_ms
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_flash_delay
@@ -1006,7 +1005,7 @@ Global Symbols
 <LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;display_init
 </UL>
 
-<P><STRONG><a name="[95]"></a>am_util_delay_us</STRONG> (Thumb, 26 bytes, Stack size 16 bytes, am_util_delay.o(i.am_util_delay_us))
+<P><STRONG><a name="[93]"></a>am_util_delay_us</STRONG> (Thumb, 26 bytes, Stack size 16 bytes, am_util_delay.o(i.am_util_delay_us))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = am_util_delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_flash_delay
@@ -1018,63 +1017,63 @@ Global Symbols
 <P><STRONG><a name="[3f]"></a>am_util_faultisr_collect_data</STRONG> (Thumb, 178 bytes, Stack size 72 bytes, am_util_faultisr.o(i.am_util_faultisr_collect_data))
 <BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = am_util_faultisr_collect_data &rArr; __aeabi_memclr4
 </UL>
-<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_mcuctrl_fault_status
-<LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getStackedReg
-<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
+<BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_mcuctrl_fault_status
+<LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getStackedReg
+<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_fault_isr
 </UL>
 
-<P><STRONG><a name="[92]"></a>am_util_stdio_printf</STRONG> (Thumb, 40 bytes, Stack size 32 bytes, am_util_stdio.o(i.am_util_stdio_printf))
+<P><STRONG><a name="[97]"></a>am_util_stdio_printf</STRONG> (Thumb, 40 bytes, Stack size 32 bytes, am_util_stdio.o(i.am_util_stdio_printf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 276<LI>Call Chain = am_util_stdio_printf &rArr; am_util_stdio_vsprintf &rArr; ftoa &rArr; uint64_to_str &rArr; divu64_10
 </UL>
-<BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
+<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_terminal_clear
+<BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_terminal_clear
 <LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
-<LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
-<LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_stimer_cmpr0_isr
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
 </UL>
 
 <P><STRONG><a name="[aa]"></a>am_util_stdio_printf_init</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, am_util_stdio.o(i.am_util_stdio_printf_init))
 <BR><BR>[Called By]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
 </UL>
 
-<P><STRONG><a name="[9a]"></a>am_util_stdio_terminal_clear</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, am_util_stdio.o(i.am_util_stdio_terminal_clear))
+<P><STRONG><a name="[99]"></a>am_util_stdio_terminal_clear</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, am_util_stdio.o(i.am_util_stdio_terminal_clear))
 <BR><BR>[Stack]<UL><LI>Max Depth = 284<LI>Call Chain = am_util_stdio_terminal_clear &rArr; am_util_stdio_printf &rArr; am_util_stdio_vsprintf &rArr; ftoa &rArr; uint64_to_str &rArr; divu64_10
 </UL>
-<BR>[Calls]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
+<BR>[Calls]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
 </UL>
 
-<P><STRONG><a name="[99]"></a>am_util_stdio_vsprintf</STRONG> (Thumb, 932 bytes, Stack size 96 bytes, am_util_stdio.o(i.am_util_stdio_vsprintf))
+<P><STRONG><a name="[98]"></a>am_util_stdio_vsprintf</STRONG> (Thumb, 932 bytes, Stack size 96 bytes, am_util_stdio.o(i.am_util_stdio_vsprintf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 244<LI>Call Chain = am_util_stdio_vsprintf &rArr; ftoa &rArr; uint64_to_str &rArr; divu64_10
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint64_to_str
-<LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint64_to_hexstr
-<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;simple_strlen
-<LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;padbuffer
-<LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_u64
-<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_i64
-<LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_hex
-<LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ftoa
-<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;decstr_to_int
-<LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
+<BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint64_to_str
+<LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint64_to_hexstr
+<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;simple_strlen
+<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;padbuffer
+<LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_u64
+<LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_i64
+<LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_hex
+<LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ftoa
+<LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;decstr_to_int
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
-<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
+<BR>[Called By]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
 </UL>
 
-<P><STRONG><a name="[93]"></a>calc_velocity</STRONG> (Thumb, 258 bytes, Stack size 72 bytes, i2c_loopback.o(i.calc_velocity))
-<BR><BR>[Stack]<UL><LI>Max Depth = 348<LI>Call Chain = calc_velocity &rArr; am_util_stdio_printf &rArr; am_util_stdio_vsprintf &rArr; ftoa &rArr; uint64_to_str &rArr; divu64_10
+<P><STRONG><a name="[91]"></a>calc_velocity</STRONG> (Thumb, 428 bytes, Stack size 80 bytes, i2c_loopback.o(i.calc_velocity))
+<BR><BR>[Stack]<UL><LI>Max Depth = 368<LI>Call Chain = calc_velocity &rArr; LcdString &rArr; am_hal_iom_spi_write &rArr; am_hal_iom_spi_write_nq &rArr; am_hal_iom_workaround_word_write &rArr; am_hal_iom_fifo_write
 </UL>
-<BR>[Calls]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
+<BR>[Calls]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
+<LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LcdString
 <LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_pow
-<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
-<LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_stimer_cmpr0_isr
 </UL>
@@ -1082,8 +1081,8 @@ Global Symbols
 <P><STRONG><a name="[a5]"></a>display_init</STRONG> (Thumb, 388 bytes, Stack size 16 bytes, i2c_loopback.o(i.display_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 272<LI>Call Chain = display_init &rArr; am_hal_iom_spi_write &rArr; am_hal_iom_spi_write_nq &rArr; am_hal_iom_workaround_word_write &rArr; am_hal_iom_fifo_write
 </UL>
-<BR>[Calls]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_us
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
+<BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_us
+<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
 <LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_spi_write
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -1098,7 +1097,7 @@ Global Symbols
 <P><STRONG><a name="[a9]"></a>itm_start</STRONG> (Thumb, 82 bytes, Stack size 8 bytes, i2c_loopback.o(i.itm_start))
 <BR><BR>[Stack]<UL><LI>Max Depth = 292<LI>Call Chain = itm_start &rArr; am_util_stdio_terminal_clear &rArr; am_util_stdio_printf &rArr; am_util_stdio_vsprintf &rArr; ftoa &rArr; uint64_to_str &rArr; divu64_10
 </UL>
-<BR>[Calls]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_terminal_clear
+<BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_terminal_clear
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf_init
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_itm_enable
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_bsp_debug_printf_enable
@@ -1115,8 +1114,8 @@ Global Symbols
 <P><STRONG><a name="[39]"></a>main</STRONG> (Thumb, 74 bytes, Stack size 0 bytes, i2c_loopback.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 332<LI>Call Chain = main &rArr; pressure_sensor_init &rArr; am_util_stdio_printf &rArr; am_util_stdio_vsprintf &rArr; ftoa &rArr; uint64_to_str &rArr; divu64_10
 </UL>
-<BR>[Calls]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_terminal_clear
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
+<BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_terminal_clear
+<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_sysctrl_sleep
 <LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_master_enable
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_clkgen_sysclk_select
@@ -1135,19 +1134,19 @@ Global Symbols
 <P><STRONG><a name="[ae]"></a>pressure_sensor_init</STRONG> (Thumb, 166 bytes, Stack size 56 bytes, i2c_loopback.o(i.pressure_sensor_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 332<LI>Call Chain = pressure_sensor_init &rArr; am_util_stdio_printf &rArr; am_util_stdio_vsprintf &rArr; ftoa &rArr; uint64_to_str &rArr; divu64_10
 </UL>
-<BR>[Calls]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
+<BR>[Calls]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
+<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_i2c_write
 <LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_i2c_read
-<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
+<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[8f]"></a>pressure_sensor_read</STRONG> (Thumb, 334 bytes, Stack size 56 bytes, i2c_loopback.o(i.pressure_sensor_read))
+<P><STRONG><a name="[8f]"></a>pressure_sensor_read</STRONG> (Thumb, 336 bytes, Stack size 56 bytes, i2c_loopback.o(i.pressure_sensor_read))
 <BR><BR>[Stack]<UL><LI>Max Depth = 280<LI>Call Chain = pressure_sensor_read &rArr; am_hal_iom_i2c_write &rArr; am_hal_iom_i2c_write_nq &rArr; am_hal_i2c_bit_bang_send &rArr; i2c_send_byte &rArr; i2c_pull_and_wait_scl_hi
 </UL>
-<BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
+<BR>[Calls]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_i2c_write
 <LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_i2c_read
 </UL>
@@ -1188,11 +1187,11 @@ Global Symbols
 
 <P><STRONG><a name="[fc]"></a>_fabs</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, basic.o(x$fpl$basic), UNUSED)
 
-<P><STRONG><a name="[a3]"></a>__aeabi_d2f</STRONG> (Thumb, 0 bytes, Stack size 32 bytes, d2f.o(x$fpl$d2f))
+<P><STRONG><a name="[a2]"></a>__aeabi_d2f</STRONG> (Thumb, 0 bytes, Stack size 32 bytes, d2f.o(x$fpl$d2f))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = __aeabi_d2f
 </UL>
-<BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
-<LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
+<BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
 </UL>
 
 <P><STRONG><a name="[b3]"></a>_d2f</STRONG> (Thumb, 98 bytes, Stack size 32 bytes, d2f.o(x$fpl$d2f), UNUSED)
@@ -1257,7 +1256,7 @@ Global Symbols
 <P><STRONG><a name="[52]"></a>__aeabi_dmul</STRONG> (Thumb, 0 bytes, Stack size 32 bytes, dmul.o(x$fpl$dmul))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = __aeabi_dmul
 </UL>
-<BR>[Called By]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
+<BR>[Called By]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
 <LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__kernel_poly
 <LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_dbl_underflow
 <LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_dbl_overflow
@@ -1301,7 +1300,7 @@ Global Symbols
 <P><STRONG><a name="[55]"></a>__aeabi_drsub</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, daddsub_clz.o(x$fpl$drsb))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __aeabi_drsub
 </UL>
-<BR>[Called By]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
+<BR>[Called By]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
 <LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_pow
 </UL>
 
@@ -1329,11 +1328,10 @@ Global Symbols
 <LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dadd1
 </UL>
 
-<P><STRONG><a name="[91]"></a>__aeabi_f2d</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, f2d.o(x$fpl$f2d))
+<P><STRONG><a name="[a4]"></a>__aeabi_f2d</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, f2d.o(x$fpl$f2d))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = __aeabi_f2d
 </UL>
-<BR>[Called By]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
-<LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_stimer_cmpr0_isr
+<BR>[Called By]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
 </UL>
 
 <P><STRONG><a name="[c4]"></a>_f2d</STRONG> (Thumb, 86 bytes, Stack size 16 bytes, f2d.o(x$fpl$f2d), UNUSED)
@@ -1388,73 +1386,73 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[9b]"></a>decstr_to_int</STRONG> (Thumb, 66 bytes, Stack size 12 bytes, am_util_stdio.o(i.decstr_to_int))
+<P><STRONG><a name="[9a]"></a>decstr_to_int</STRONG> (Thumb, 66 bytes, Stack size 12 bytes, am_util_stdio.o(i.decstr_to_int))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = decstr_to_int
 </UL>
-<BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
+<BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
 </UL>
 
 <P><STRONG><a name="[af]"></a>divu64_10</STRONG> (Thumb, 204 bytes, Stack size 36 bytes, am_util_stdio.o(i.divu64_10))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = divu64_10
 </UL>
-<BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint64_to_str
-<LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_u64
+<BR>[Called By]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint64_to_str
+<LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_u64
 </UL>
 
-<P><STRONG><a name="[a4]"></a>ftoa</STRONG> (Thumb, 334 bytes, Stack size 48 bytes, am_util_stdio.o(i.ftoa))
+<P><STRONG><a name="[a3]"></a>ftoa</STRONG> (Thumb, 334 bytes, Stack size 48 bytes, am_util_stdio.o(i.ftoa))
 <BR><BR>[Stack]<UL><LI>Max Depth = 148<LI>Call Chain = ftoa &rArr; uint64_to_str &rArr; divu64_10
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint64_to_str
+<BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint64_to_str
 </UL>
-<BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
+<BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
 </UL>
 
-<P><STRONG><a name="[9e]"></a>ndigits_in_hex</STRONG> (Thumb, 52 bytes, Stack size 12 bytes, am_util_stdio.o(i.ndigits_in_hex))
+<P><STRONG><a name="[9d]"></a>ndigits_in_hex</STRONG> (Thumb, 52 bytes, Stack size 12 bytes, am_util_stdio.o(i.ndigits_in_hex))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = ndigits_in_hex
 </UL>
-<BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
+<BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
 </UL>
 
-<P><STRONG><a name="[a2]"></a>ndigits_in_i64</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, am_util_stdio.o(i.ndigits_in_i64))
+<P><STRONG><a name="[a1]"></a>ndigits_in_i64</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, am_util_stdio.o(i.ndigits_in_i64))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = ndigits_in_i64 &rArr; ndigits_in_u64 &rArr; divu64_10
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_u64
+<BR>[Calls]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_u64
 </UL>
-<BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
+<BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
 </UL>
 
-<P><STRONG><a name="[a0]"></a>ndigits_in_u64</STRONG> (Thumb, 58 bytes, Stack size 16 bytes, am_util_stdio.o(i.ndigits_in_u64))
+<P><STRONG><a name="[9f]"></a>ndigits_in_u64</STRONG> (Thumb, 58 bytes, Stack size 16 bytes, am_util_stdio.o(i.ndigits_in_u64))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = ndigits_in_u64 &rArr; divu64_10
 </UL>
 <BR>[Calls]<UL><LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;divu64_10
 </UL>
-<BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
-<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_i64
+<BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
+<LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ndigits_in_i64
 </UL>
 
-<P><STRONG><a name="[9d]"></a>padbuffer</STRONG> (Thumb, 34 bytes, Stack size 12 bytes, am_util_stdio.o(i.padbuffer))
+<P><STRONG><a name="[9c]"></a>padbuffer</STRONG> (Thumb, 34 bytes, Stack size 12 bytes, am_util_stdio.o(i.padbuffer))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = padbuffer
 </UL>
-<BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
+<BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
 </UL>
 
-<P><STRONG><a name="[9c]"></a>simple_strlen</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, am_util_stdio.o(i.simple_strlen))
-<BR><BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
+<P><STRONG><a name="[9b]"></a>simple_strlen</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, am_util_stdio.o(i.simple_strlen))
+<BR><BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
 </UL>
 
-<P><STRONG><a name="[9f]"></a>uint64_to_hexstr</STRONG> (Thumb, 138 bytes, Stack size 44 bytes, am_util_stdio.o(i.uint64_to_hexstr))
+<P><STRONG><a name="[9e]"></a>uint64_to_hexstr</STRONG> (Thumb, 138 bytes, Stack size 44 bytes, am_util_stdio.o(i.uint64_to_hexstr))
 <BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = uint64_to_hexstr
 </UL>
-<BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
+<BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
 </UL>
 
-<P><STRONG><a name="[a1]"></a>uint64_to_str</STRONG> (Thumb, 112 bytes, Stack size 64 bytes, am_util_stdio.o(i.uint64_to_str))
+<P><STRONG><a name="[a0]"></a>uint64_to_str</STRONG> (Thumb, 112 bytes, Stack size 64 bytes, am_util_stdio.o(i.uint64_to_str))
 <BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = uint64_to_str &rArr; divu64_10
 </UL>
 <BR>[Calls]<UL><LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;divu64_10
 </UL>
-<BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
-<LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ftoa
+<BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
+<LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ftoa
 </UL>
 
 <P><STRONG><a name="[7c]"></a>internal_iom_get_int_err</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, am_hal_iom.o(i.internal_iom_get_int_err))

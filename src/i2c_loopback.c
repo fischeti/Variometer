@@ -102,6 +102,8 @@ uint32_t data_pressure = 0;
 uint32_t data_temperature = 0;
 uint32_t coeff[] = {0,0,0,0,0,0,0,0};
 int32_t pressure_and_temperature[] = {0,0};
+float velocity_array[] = {0,0,0,0,0,0,0,0,0,0};
+uint8_t velocity_array_counter = 0;
 static const uint8_t ASCII[][5] =
 {
  {0x00, 0x00, 0x00, 0x00, 0x00} // 20  
@@ -286,9 +288,9 @@ am_stimer_cmpr0_isr(void)
 		kalman_filter(data_pressure);
 		
 		// am_util_stdio_printf("\npressure: ");
-		am_util_stdio_printf("%f" " ", xt[0]);
-		am_util_stdio_printf("%f" " ", xt[1]);
-		am_util_stdio_printf("%d" " ", data_pressure);
+//		am_util_stdio_printf("%f" " ", xt[0]);
+//		am_util_stdio_printf("%f" " ", xt[1]);
+//		am_util_stdio_printf("%d" " ", data_pressure);
 	
 		float velocity = calc_velocity(xt[0], x_old, data_temperature);
 }
@@ -464,9 +466,9 @@ pressure_sensor_read(void)
 		//
 		// Set up conversion mode for OSR 512 (pressure)
 		//
-		uint8_t cmd = CMD_ADC_CONV+CMD_ADC_512;
+		uint8_t cmd = CMD_ADC_CONV+CMD_ADC_4096;
 		uint32_t res = am_hal_iom_i2c_write(IOM_MODULE_I2C, MS5611_I2C_ADRESS, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
-		am_util_delay_ms(2);
+		am_util_delay_ms(10);
 		
 		//
 		// Send a read command
@@ -481,11 +483,11 @@ pressure_sensor_read(void)
 		
 		
 		//
-		// Set up conversion mode for OSR 512 (temperature)
+		// Set up conversion mode for OSR 4096 (temperature)
 		//
-		cmd = CMD_ADC_CONV+CMD_ADC_512+CMD_ADC_D2;
+		cmd = CMD_ADC_CONV+CMD_ADC_4096+CMD_ADC_D2;
 		res = am_hal_iom_i2c_write(IOM_MODULE_I2C, MS5611_I2C_ADRESS, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
-		am_util_delay_ms(2);
+		am_util_delay_ms(10);
 		
 		//
 		// Send a read command
@@ -639,7 +641,20 @@ calc_velocity(float x_new, float x_old, float temp)
 		float diff_altitude = altitude_new - altitude_old;
 		float vertical_speed = diff_altitude/WAKE_INTERVAL_IN_MS*1000;
 	
-		am_util_stdio_printf("%f" "\n", vertical_speed);
+		velocity_array[velocity_array_counter] = vertical_speed;
+		velocity_array_counter = (velocity_array_counter + 1) % 10;
+		float vertical_speed_avg = 0;
+		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
+		vertical_speed_avg /= 10;
+	
+		char speed_string[] = {(char)vertical_speed_avg};
+		
+		// am_util_stdio_sprintf((char *)&speed_string, "%.1f", vertical_speed_avg);
+		LcdString((char *)&speed_string, 1, 5);
+		am_util_stdio_printf("%f" " ", altitude_new);
+		am_util_stdio_printf("%f" " ", altitude_old);
+		am_util_stdio_printf("%f" " ", diff_altitude);
+		am_util_stdio_printf("%.1f" "\n", vertical_speed_avg);
 	
 		return vertical_speed;
 }

@@ -155,9 +155,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>532</LineNumber>
+          <LineNumber>653</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>17396</Address>
+          <Address>15494</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -166,7 +166,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>../src/i2c_loopback.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\i2c_loopback\../src/i2c_loopback.c\532</Expression>
+          <Expression>\\i2c_loopback\../src/i2c_loopback.c\653</Expression>
         </Bp>
       </Breakpoint>
       <Tracepoint>
