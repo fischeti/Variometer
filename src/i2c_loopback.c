@@ -649,13 +649,15 @@ calc_velocity(float x_new, float x_old, float temp)
 		float vertical_speed_avg = 0;
 		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
 		vertical_speed_avg /= 10;
+		
 	
-		char speed_string[4];
+		char speed_string[10];
 		
 		am_util_stdio_sprintf((char *)&speed_string, "%.1f", vertical_speed_avg);
+		am_util_stdio_printf("%s" "\n",(char *)&speed_string);
 		LcdString((char *)&speed_string, 5, 3);
-		am_util_stdio_printf("%.1f" "\n", vertical_speed_avg);
-	
+		// am_util_delay_ms(50);
+ 	
 		return vertical_speed;
 }
 //*****************************************************************************
@@ -730,6 +732,7 @@ main(void)
     //
     // Loop forever.
     //
+		
     while (1)
     {
         //

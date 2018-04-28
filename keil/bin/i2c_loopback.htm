@@ -3,9 +3,9 @@
 <title>Static Call Graph - [.\bin\i2c_loopback.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\bin\i2c_loopback.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Thu Apr 26 17:18:21 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Sat Apr 28 15:16:27 2018
 <BR><P>
-<H3>Maximum Stack Usage =        384 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        392 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 am_stimer_cmpr0_isr &rArr; calc_velocity &rArr; LcdString &rArr; am_hal_iom_spi_write &rArr; am_hal_iom_spi_write_nq &rArr; am_hal_iom_workaround_word_write &rArr; am_hal_iom_fifo_write
 <P>
@@ -982,7 +982,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1d]"></a>am_stimer_cmpr0_isr</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, i2c_loopback.o(i.am_stimer_cmpr0_isr))
-<BR><BR>[Stack]<UL><LI>Max Depth = 384<LI>Call Chain = am_stimer_cmpr0_isr &rArr; calc_velocity &rArr; LcdString &rArr; am_hal_iom_spi_write &rArr; am_hal_iom_spi_write_nq &rArr; am_hal_iom_workaround_word_write &rArr; am_hal_iom_fifo_write
+<BR><BR>[Stack]<UL><LI>Max Depth = 392<LI>Call Chain = am_stimer_cmpr0_isr &rArr; calc_velocity &rArr; LcdString &rArr; am_hal_iom_spi_write &rArr; am_hal_iom_spi_write_nq &rArr; am_hal_iom_workaround_word_write &rArr; am_hal_iom_fifo_write
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_stimer_int_clear
 <LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_stimer_compare_delta_set
@@ -1072,8 +1072,8 @@ Global Symbols
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
 </UL>
 
-<P><STRONG><a name="[91]"></a>calc_velocity</STRONG> (Thumb, 374 bytes, Stack size 80 bytes, i2c_loopback.o(i.calc_velocity))
-<BR><BR>[Stack]<UL><LI>Max Depth = 368<LI>Call Chain = calc_velocity &rArr; LcdString &rArr; am_hal_iom_spi_write &rArr; am_hal_iom_spi_write_nq &rArr; am_hal_iom_workaround_word_write &rArr; am_hal_iom_fifo_write
+<P><STRONG><a name="[91]"></a>calc_velocity</STRONG> (Thumb, 360 bytes, Stack size 88 bytes, i2c_loopback.o(i.calc_velocity))
+<BR><BR>[Stack]<UL><LI>Max Depth = 376<LI>Call Chain = calc_velocity &rArr; LcdString &rArr; am_hal_iom_spi_write &rArr; am_hal_iom_spi_write_nq &rArr; am_hal_iom_workaround_word_write &rArr; am_hal_iom_fifo_write
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_sprintf
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
