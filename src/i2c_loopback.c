@@ -288,9 +288,9 @@ am_stimer_cmpr0_isr(void)
 		kalman_filter(data_pressure);
 		
 		// am_util_stdio_printf("\npressure: ");
-//		am_util_stdio_printf("%f" " ", xt[0]);
-//		am_util_stdio_printf("%f" " ", xt[1]);
-//		am_util_stdio_printf("%d" " ", data_pressure);
+		// am_util_stdio_printf("%f" " ", xt[0]);
+		// am_util_stdio_printf("%f" " ", xt[1]);
+		// am_util_stdio_printf("%d" " ", data_pressure);
 	
 		float velocity = calc_velocity(xt[0], x_old, data_temperature);
 }
@@ -449,7 +449,10 @@ pressure_sensor_init(void)
 					res = am_hal_iom_i2c_read(IOM_MODULE_I2C, MS5611_I2C_ADRESS, (uint32_t *)receive_coeff + i, 2, AM_HAL_IOM_RAW);
 					coeff[i] = ((receive_coeff[i] & 0x0000FF00) >> 8) | ((receive_coeff[i] & 0x000000FF) << 8);
 			}
-		}		
+		}
+
+		pressure_sensor_read();
+		xt[0] = data_pressure;
 	}
 //*****************************************************************************
 //
@@ -647,13 +650,10 @@ calc_velocity(float x_new, float x_old, float temp)
 		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
 		vertical_speed_avg /= 10;
 	
-		char speed_string[] = {(char)vertical_speed_avg};
+		char speed_string[4];
 		
-		// am_util_stdio_sprintf((char *)&speed_string, "%.1f", vertical_speed_avg);
-		LcdString((char *)&speed_string, 1, 5);
-		am_util_stdio_printf("%f" " ", altitude_new);
-		am_util_stdio_printf("%f" " ", altitude_old);
-		am_util_stdio_printf("%f" " ", diff_altitude);
+		am_util_stdio_sprintf((char *)&speed_string, "%.1f", vertical_speed_avg);
+		LcdString((char *)&speed_string, 5, 3);
 		am_util_stdio_printf("%.1f" "\n", vertical_speed_avg);
 	
 		return vertical_speed;
@@ -726,8 +726,6 @@ main(void)
     // Initialize display
     //
 		display_init();
-		
-		LcdString("Hello World!", 5, 1);
 		
     //
     // Loop forever.
