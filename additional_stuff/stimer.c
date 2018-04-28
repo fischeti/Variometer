@@ -9,7 +9,7 @@
 //
 //*****************************************************************************
 
-#define BUZZER_PIN 12
+#define BUZZER_PIN 25
 #define BUZZER_PWM_TIMER 0
 
 uint32_t BUZZER_BUZZER_WAKE_INTERVAL_IN_MS = 1000;
