@@ -14,6 +14,9 @@
 #define WAKE_INTERVAL_IN_MS     100
 #define XT_PERIOD               32768
 #define WAKE_INTERVAL           XT_PERIOD * WAKE_INTERVAL_IN_MS * 1e-3
+#define LCD_WAKE_INTERVAL_IN_MS 1234
+#define LCD_XT_PERIOD           32768
+#define LCD_WAKE_INTERVAL       LCD_XT_PERIOD * LCD_WAKE_INTERVAL_IN_MS * 1e-3
 #define IOM_MODULE_I2C     			0 // This will have a side benefit of testing IOM4 in offset mode
 #define IOM_MODULE_SPI     			1
 #define IOS_ADDRESS             0x20
@@ -34,8 +37,21 @@
 #define SPI_SCLK_PIN	8
 #define MOSI_PIN			10
 #define SCE_PIN				12
+#define BUZZER_PIN 25
+#define BUZZER_PWM_TIMER 0
 
 
+//*****************************************************************************
+//
+// Macro definitions
+//
+//*****************************************************************************
+uint32_t BUZZER_BUZZER_WAKE_INTERVAL_IN_MS = 1000;
+uint32_t BUZZER_XT_PERIOD = 32768;
+uint32_t BUZZER_WAKE_INTERVAL = 32768 * 1000 * 1e-3;
+float buzzer_small_frequency = 1200;
+uint32_t buzzer_ctimer_counter = 10, buzzer_ctimer_duty_cycle = 5;
+uint32_t toggle_bit = 1;
 
 //*****************************************************************************
 //
@@ -181,35 +197,191 @@ void kalman_filter(int32_t data);
 void display_init(void);
 void LcdString(char *characters, uint8_t x, uint8_t y);
 float calc_velocity(float x_new, float x_old, float temp);
+void buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_frequency);
+void init_cTimer(void);
+void am_ctimer_isr(void);
+void am_stimer_cmpr1_isr(void);
 
+
+//*****************************************************************************
+//
+// BuzzerChange
+//
+//*****************************************************************************
+void
+buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_frequency)
+{
+	//
+	//Clear old Timers.
+	//
+	am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREB);
+	am_hal_ctimer_clear(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
+	
+	//
+	//Calculate Waketime for big Frequency
+	//
+	
+	BUZZER_BUZZER_WAKE_INTERVAL_IN_MS = 1000 * (1.0 / desired_big_frequency);
+	
+	//
+	//Calculate Counter value regarding to small Frequency
+	//
+		
+	float period_time = 1.0 / 12000;
+	float float_buzzer_timer_counter = (int)(1 / (desired_small_frequency * period_time));
+	float float_buzzer_duty_cycle = float_buzzer_timer_counter / 2;
+		
+	buzzer_ctimer_counter = (int) float_buzzer_timer_counter - 1;
+	buzzer_ctimer_duty_cycle = (int) float_buzzer_duty_cycle;
+	
+	//
+	//Restart all Timers.
+	//
+
+  //
+ 	// Enable the timer interrupt in the NVIC.
+  //
+	// am_hal_interrupt_master_enable();
+	
+	//
+  // Configure the pins for this example.
+  //
+	am_hal_gpio_pin_config(BUZZER_PIN, AM_HAL_PIN_12_TCTA0);
+	am_hal_gpio_out_bit_set(BUZZER_PIN);
+		
+	//
+	//Do the real Shit
+	//
+	init_cTimer();
+	
+	// am_util_stdio_printf("buzzer frequencies have been changed!");
+}
+
+//*****************************************************************************
+//
+// Initalize Buzzer CTimer function.
+//
+//*****************************************************************************
+void
+init_cTimer()
+{
+    //
+    // Configure a timer to drive the BUZZER.
+    //
+    am_hal_ctimer_config_single(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA, (AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_HFRC_12KHZ |AM_HAL_CTIMER_INT_ENABLE | AM_HAL_CTIMER_PIN_ENABLE));
+
+    //
+    // Set up initial timer period.
+    //
+    am_hal_ctimer_period_set(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA, 64, 32);
+
+    //
+    // Enable interrupts for the Timer we are using on this board.
+    //
+    am_hal_ctimer_int_enable(AM_HAL_CTIMER_INT_TIMERA0);
+    am_hal_interrupt_enable(AM_HAL_INTERRUPT_CTIMER);
+    am_hal_interrupt_master_enable();
+		
+		
+}
+
+//*****************************************************************************
+//
+// Buzzer cTimer Interrupt Serive Routine (ISR)
+//
+//*****************************************************************************
+void
+am_ctimer_isr(void)
+{
+  //
+  // Clear the interrupt that got us here.
+  //
+  am_hal_ctimer_int_clear(AM_HAL_CTIMER_INT_TIMERA0);
+
+  //
+  // Now set new PWM half-period for the BUZZER.
+  //
+	
+  am_hal_ctimer_period_set(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA, buzzer_ctimer_counter, buzzer_ctimer_duty_cycle);
+	
+	
+}
+
+
+
+
+//*****************************************************************************
+//
+// Buzzer Timer B1 Interrupt Service Routine (ISR)
+//
+//*****************************************************************************
+void
+am_stimer_cmpr1_isr(void)
+{
+	
+		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
+	
+		BUZZER_WAKE_INTERVAL = BUZZER_XT_PERIOD * BUZZER_BUZZER_WAKE_INTERVAL_IN_MS * 1e-3;
+    //
+    // Check the timer interrupt status.
+    //
+    am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREB);
+    am_hal_stimer_compare_delta_set(1, BUZZER_WAKE_INTERVAL);
+
+		//
+    // Toggle the cTimer.
+    //
+	
+		toggle_bit = !toggle_bit;
+		
+		if(toggle_bit){
+			am_hal_ctimer_start(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
+		}	
+		
+		else{
+			am_hal_ctimer_clear(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
+		}
+		
+		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
+}
 //*****************************************************************************
 //
 // Init function for Timer A0.
 //
 //*****************************************************************************
 void
-stimer_init(void)
+stimer_init_A(void)
 {
     //
     // Enable compare A interrupt in STIMER
     //
-    am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREA);
+    am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREA | AM_HAL_STIMER_INT_COMPAREB | AM_HAL_STIMER_INT_COMPAREC);
 
+	
     //
     // Enable the timer interrupt in the NVIC.
     //
     am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR0);
-
+		am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR1);
+		am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR2);
+		
     //
     // Configure the STIMER and run
     //
     am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
     am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
+		am_hal_stimer_compare_delta_set(1, BUZZER_WAKE_INTERVAL);
+		am_hal_stimer_compare_delta_set(2, LCD_WAKE_INTERVAL);
     am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ |
-                         AM_HAL_STIMER_CFG_COMPARE_A_ENABLE);
+                         AM_HAL_STIMER_CFG_COMPARE_A_ENABLE | 
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
 
 }
-
 //*****************************************************************************
 //
 // Timer Interrupt Service Routine (ISR)
@@ -218,12 +390,30 @@ stimer_init(void)
 void
 am_stimer_cmpr0_isr(void)
 {
+		
+		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
+
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
     //
     // Check the timer interrupt status.
     //
     am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREA);
     am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
+	
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
 
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
+	
+		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
     //
     // Read the pressure data
     //
@@ -242,6 +432,39 @@ am_stimer_cmpr0_isr(void)
 }
 
 
+//*****************************************************************************
+//
+// Timer Interrupt Service Routine (ISR)
+//
+//*****************************************************************************
+void
+am_stimer_compr2_isr(void)
+{
+	
+		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
+
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
+		//
+    // Check the timer interrupt status.
+    //
+    am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREB);
+    am_hal_stimer_compare_delta_set(2, LCD_WAKE_INTERVAL);
+	
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
+
+		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
+	
+		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
+}
 //*****************************************************************************
 //
 // I2C Master Configuration
@@ -658,12 +881,22 @@ main(void)
 		//
     // STIMER init.
     //
-    stimer_init();
+		
+		// init_cTimer();
+		// am_hal_gpio_pin_config(BUZZER_PIN, AM_HAL_PIN_12_TCTA0);
+		// am_hal_gpio_out_bit_set(BUZZER_PIN);
+    stimer_init_A();
+		am_hal_interrupt_master_enable();
+		
+		
+		
+		//
+		// Start the motherfucking Buzzy
+		//
+		
 
-    //
-    // Enable the timer interrupt in the NVIC.
-    //
-    am_hal_interrupt_master_enable();
+		// buzzer_change_frequency(1, 100);
+
 		
 		//
     // Initialize the sensor and read the coefficients
@@ -679,6 +912,8 @@ main(void)
     // Loop forever.
     //
 		
+		
+				
     while (1)
     {
         //
