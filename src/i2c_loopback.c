@@ -205,6 +205,31 @@ void am_stimer_cmpr1_isr(void);
 
 //*****************************************************************************
 //
+// WatchDogStuff
+//
+//*****************************************************************************
+uint8_t g_ui8NumWatchdogInterrupts = 0;
+uint32_t g_ui32ResetStatus = 0;
+
+am_hal_wdt_config_t g_sWatchdogConfig =
+{
+
+#ifdef AM_PART_APOLLO2
+    .ui32Config = AM_REG_WDT_CFG_CLKSEL_1HZ | AM_HAL_WDT_ENABLE_RESET | AM_HAL_WDT_ENABLE_INTERRUPT,
+#endif
+    //
+    // Set WDT interrupt timeout for 3 second.
+    //
+    .ui16InterruptCount = 3,
+
+    //
+    // Set WDT reset timeout for 15 seconds.
+    //
+    .ui16ResetCount = 15
+};
+
+//*****************************************************************************
+//
 // BuzzerChange
 //
 //*****************************************************************************
@@ -310,6 +335,91 @@ am_ctimer_isr(void)
 
 
 
+
+//*****************************************************************************
+//
+// Init function for Timer A0.
+//
+//*****************************************************************************
+void
+stimer_init(void)
+{
+    //
+    // Enable compare A interrupt in STIMER
+    //
+    am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREA | AM_HAL_STIMER_INT_COMPAREB/* | AM_HAL_STIMER_INT_COMPAREC*/);
+
+	
+    //
+    // Enable the timer interrupt in the NVIC.
+    //
+    am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR0);
+		am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR1);
+//		am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR2);
+		
+    //
+    // Configure the STIMER and run
+    //
+    am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
+    am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
+		am_hal_stimer_compare_delta_set(1, BUZZER_WAKE_INTERVAL);
+//		am_hal_stimer_compare_delta_set(2, LCD_WAKE_INTERVAL);
+    am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ |
+                         AM_HAL_STIMER_CFG_COMPARE_A_ENABLE | 
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
+
+}
+//*****************************************************************************
+//
+// Timer Interrupt Service Routine (ISR)
+//
+//*****************************************************************************
+void
+am_stimer_cmpr0_isr(void)
+{
+		
+		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
+
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
+    //
+    // Check the timer interrupt status.
+    //
+    am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREA);
+    am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
+	
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
+
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
+	
+		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
+    //
+    // Read the pressure data
+    //
+		pressure_sensor_read();
+	
+		float x_old = xt[0];
+	
+		kalman_filter(data_pressure);
+		
+		// am_util_stdio_printf("\npressure: ");
+		// am_util_stdio_printf("%f" " ", xt[0]);
+		// am_util_stdio_printf("%f" " ", xt[1]);
+		// am_util_stdio_printf("%d" " ", data_pressure);
+	
+		float velocity = calc_velocity(xt[0], x_old, data_temperature);
+}
+
+
 //*****************************************************************************
 //
 // Buzzer Timer B1 Interrupt Service Routine (ISR)
@@ -320,8 +430,8 @@ am_stimer_cmpr1_isr(void)
 {
 	
 		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
 	
 		BUZZER_WAKE_INTERVAL = BUZZER_XT_PERIOD * BUZZER_BUZZER_WAKE_INTERVAL_IN_MS * 1e-3;
     //
@@ -345,93 +455,9 @@ am_stimer_cmpr1_isr(void)
 		}
 		
 		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
+                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
 }
-//*****************************************************************************
-//
-// Init function for Timer A0.
-//
-//*****************************************************************************
-void
-stimer_init_A(void)
-{
-    //
-    // Enable compare A interrupt in STIMER
-    //
-    am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREA | AM_HAL_STIMER_INT_COMPAREB | AM_HAL_STIMER_INT_COMPAREC);
-
-	
-    //
-    // Enable the timer interrupt in the NVIC.
-    //
-    am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR0);
-		am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR1);
-		am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR2);
-		
-    //
-    // Configure the STIMER and run
-    //
-    am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
-    am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
-		am_hal_stimer_compare_delta_set(1, BUZZER_WAKE_INTERVAL);
-		am_hal_stimer_compare_delta_set(2, LCD_WAKE_INTERVAL);
-    am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ |
-                         AM_HAL_STIMER_CFG_COMPARE_A_ENABLE | 
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
-
-}
-//*****************************************************************************
-//
-// Timer Interrupt Service Routine (ISR)
-//
-//*****************************************************************************
-void
-am_stimer_cmpr0_isr(void)
-{
-		
-		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
-
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
-    //
-    // Check the timer interrupt status.
-    //
-    am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREA);
-    am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
-	
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
-
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
-	
-		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
-    //
-    // Read the pressure data
-    //
-		pressure_sensor_read();
-	
-		float x_old = xt[0];
-	
-		kalman_filter(data_pressure);
-		
-		// am_util_stdio_printf("\npressure: ");
-		// am_util_stdio_printf("%f" " ", xt[0]);
-		// am_util_stdio_printf("%f" " ", xt[1]);
-		// am_util_stdio_printf("%d" " ", data_pressure);
-	
-		float velocity = calc_velocity(xt[0], x_old, data_temperature);
-}
-
-
 //*****************************************************************************
 //
 // Timer Interrupt Service Routine (ISR)
@@ -446,24 +472,68 @@ am_stimer_compr2_isr(void)
                          AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
 		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
 
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
 		//
     // Check the timer interrupt status.
     //
-    am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREB);
+    am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREC);
     am_hal_stimer_compare_delta_set(2, LCD_WAKE_INTERVAL);
 	
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
+//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
 
 		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
 	
 		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
                          AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
                          AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
+}
+
+//*****************************************************************************
+//
+// Interrupt handler for the WATCHDOG.
+//
+//*****************************************************************************
+void
+am_watchdog_isr(void)
+{
+    //
+    // Clear the watchdog interrupt.
+    //
+    am_hal_wdt_int_clear();
+
+    //
+    // Catch the first four watchdog interrupts, but let the fifth through
+    // untouched.
+    //
+    if ( g_ui8NumWatchdogInterrupts < 4 )
+    {
+        //
+        // Restart the watchdog.
+        //
+        am_hal_wdt_restart();
+    }
+
+    //
+    // Enable debug printf messages using ITM on SWO pin
+    //
+    am_bsp_debug_printf_enable();
+
+    //
+    // Send a status message and give it some time to print.
+    //
+    am_util_stdio_printf("Interrupt #: %d\n", g_ui8NumWatchdogInterrupts);
+    am_util_delay_ms(100);
+
+    //
+    // Increment the number of watchdog interrupts.
+    //
+    g_ui8NumWatchdogInterrupts++;
+
+
 }
 //*****************************************************************************
 //
@@ -885,17 +955,8 @@ main(void)
 		// init_cTimer();
 		// am_hal_gpio_pin_config(BUZZER_PIN, AM_HAL_PIN_12_TCTA0);
 		// am_hal_gpio_out_bit_set(BUZZER_PIN);
-    stimer_init_A();
+    stimer_init();
 		am_hal_interrupt_master_enable();
-		
-		
-		
-		//
-		// Start the motherfucking Buzzy
-		//
-		
-
-		// buzzer_change_frequency(1, 100);
 
 		
 		//
@@ -908,12 +969,38 @@ main(void)
     //
 		display_init();
 		
+
+		
+		//
+    // Clear reset status register for next time we reset.
     //
+    am_hal_reset_status_clear();
+
+    //
+    // LFRC has to be turned on for this example because the watchdog only
+    // runs off of the LFRC.
+    //
+    am_hal_clkgen_osc_start(AM_HAL_CLKGEN_OSC_LFRC);
+
+    //
+    // Configure the watchdog.
+    //
+    am_hal_wdt_init(&g_sWatchdogConfig);
+
+    //
+    // Enable the interrupt for the watchdog in the NVIC.
+    //
+    am_hal_interrupt_enable(AM_HAL_INTERRUPT_WATCHDOG);
+    am_hal_interrupt_master_enable();
+
+    //
+    // Enable the watchdog.
+    //
+    am_hal_wdt_start();
+		
+		//
     // Loop forever.
     //
-		
-		
-				
     while (1)
     {
         //
