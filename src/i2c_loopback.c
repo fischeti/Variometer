@@ -542,8 +542,6 @@ am_watchdog_isr(void)
 		am_util_stdio_sprintf(temperature_string, "%d", data_temperature / 100);
 		temperature_string[2 + (data_temperature < 0)] = 0x81;
 		temperature_string[3 + (data_temperature < 0)] = 'C';
-		am_util_stdio_printf("%d ", data_temperature / 100);
-		am_util_stdio_printf("%s\n", temperature_string);
 		LcdString(temperature_string, 40, 4);
 
 }
