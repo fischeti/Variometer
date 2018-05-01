@@ -46,7 +46,7 @@
 // Macro definitions
 //
 //*****************************************************************************
-uint32_t BUZZER_BUZZER_WAKE_INTERVAL_IN_MS = 1000;
+uint32_t BUZZER_WAKE_INTERVAL_IN_MS = 1000;
 uint32_t BUZZER_XT_PERIOD = 32768;
 uint32_t BUZZER_WAKE_INTERVAL = 32768 * 1000 * 1e-3;
 float buzzer_small_frequency = 1200;
@@ -167,13 +167,27 @@ static const uint8_t ASCII[][5] =
 };
 
 
+static const uint8_t ASCII_BIG[][15] = 
+{
+	 {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF} // 0 top
+	,{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF} // 0 middle
+	,{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF} // 0 bottom
+	,{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF} // 1 top
+	,{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF} // 1 middle
+	,{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF} // 1 bottom
+	,{0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF} // 2 top
+	,{0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0x7E, 0x7E, 0x7E, 0x7E, 0x7E, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F} // 2 middle
+	,{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8} // 2 bottom
+};
+
+
 //*****************************************************************************
 //
 // Kalman Initialization
 //
 //*****************************************************************************
 float dt = WAKE_INTERVAL_IN_MS;
-float xt[] = {0, 0};
+float xt[] = {0, 0, 0};
 float P[] = {158806, 107, 124, 0.157};
 float A[] = {1, 100, 0, 1};
 float H[] = {1, 0};
@@ -201,31 +215,21 @@ void buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_sm
 void init_cTimer(void);
 void am_ctimer_isr(void);
 void am_stimer_cmpr1_isr(void);
+void write_big_number(uint32_t number, uint8_t x, uint8_t y);
 
-
-//*****************************************************************************
-//
-// WatchDogStuff
-//
-//*****************************************************************************
-uint8_t g_ui8NumWatchdogInterrupts = 0;
-uint32_t g_ui32ResetStatus = 0;
 
 am_hal_wdt_config_t g_sWatchdogConfig =
 {
+    //
+    // Select the Apollo 2 Clock Rate.
+    //
 
-#ifdef AM_PART_APOLLO2
-    .ui32Config = AM_REG_WDT_CFG_CLKSEL_1HZ | AM_HAL_WDT_ENABLE_RESET | AM_HAL_WDT_ENABLE_INTERRUPT,
-#endif
+    .ui32Config = AM_REG_WDT_CFG_CLKSEL_128HZ | AM_HAL_WDT_DISABLE_RESET | AM_HAL_WDT_ENABLE_INTERRUPT,
+	
     //
-    // Set WDT interrupt timeout for 3 second.
+    // Set WDT interrupt timeout for 1 second.
     //
-    .ui16InterruptCount = 3,
-
-    //
-    // Set WDT reset timeout for 15 seconds.
-    //
-    .ui16ResetCount = 15
+    .ui16InterruptCount = 128,
 };
 
 //*****************************************************************************
@@ -246,7 +250,7 @@ buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_f
 	//Calculate Waketime for big Frequency
 	//
 	
-	BUZZER_BUZZER_WAKE_INTERVAL_IN_MS = 1000 * (1.0 / desired_big_frequency);
+	BUZZER_WAKE_INTERVAL_IN_MS = 1000 * (1.0 / desired_big_frequency);
 	
 	//
 	//Calculate Counter value regarding to small Frequency
@@ -258,28 +262,8 @@ buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_f
 		
 	buzzer_ctimer_counter = (int) float_buzzer_timer_counter - 1;
 	buzzer_ctimer_duty_cycle = (int) float_buzzer_duty_cycle;
-	
-	//
-	//Restart all Timers.
-	//
-
-  //
- 	// Enable the timer interrupt in the NVIC.
-  //
-	// am_hal_interrupt_master_enable();
-	
-	//
-  // Configure the pins for this example.
-  //
-	am_hal_gpio_pin_config(BUZZER_PIN, AM_HAL_PIN_12_TCTA0);
-	am_hal_gpio_out_bit_set(BUZZER_PIN);
 		
-	//
-	//Do the real Shit
-	//
-	init_cTimer();
-	
-	// am_util_stdio_printf("buzzer frequencies have been changed!");
+	am_util_stdio_printf("buzzer frequencies have been changed!");
 }
 
 //*****************************************************************************
@@ -338,7 +322,7 @@ am_ctimer_isr(void)
 
 //*****************************************************************************
 //
-// Init function for Timer A0.
+// Init function for Timer A0 & B1.
 //
 //*****************************************************************************
 void
@@ -407,16 +391,14 @@ am_stimer_cmpr0_isr(void)
     //
 		pressure_sensor_read();
 	
-		float x_old = xt[0];
+		xt[2] = xt[0];
 	
 		kalman_filter(data_pressure);
 		
 		// am_util_stdio_printf("\npressure: ");
 		// am_util_stdio_printf("%f" " ", xt[0]);
 		// am_util_stdio_printf("%f" " ", xt[1]);
-		// am_util_stdio_printf("%d" " ", data_pressure);
-	
-		float velocity = calc_velocity(xt[0], x_old, data_temperature);
+		//am_util_stdio_printf("%d" " ", data_pressure);
 }
 
 
@@ -433,7 +415,7 @@ am_stimer_cmpr1_isr(void)
                          AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
                          AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
 	
-		BUZZER_WAKE_INTERVAL = BUZZER_XT_PERIOD * BUZZER_BUZZER_WAKE_INTERVAL_IN_MS * 1e-3;
+		BUZZER_WAKE_INTERVAL = BUZZER_XT_PERIOD * BUZZER_WAKE_INTERVAL_IN_MS * 1e-3;
     //
     // Check the timer interrupt status.
     //
@@ -505,35 +487,15 @@ am_watchdog_isr(void)
     //
     am_hal_wdt_int_clear();
 
-    //
-    // Catch the first four watchdog interrupts, but let the fifth through
-    // untouched.
-    //
-    if ( g_ui8NumWatchdogInterrupts < 4 )
-    {
-        //
-        // Restart the watchdog.
-        //
-        am_hal_wdt_restart();
-    }
+		am_hal_wdt_restart();
+	
+		float velocity = calc_velocity(xt[0], xt[2], data_temperature);
+	
+		write_big_number(0,0,0);
+		write_big_number(1,16,0);
+		write_big_number(2,32,0);
 
-    //
-    // Enable debug printf messages using ITM on SWO pin
-    //
-    am_bsp_debug_printf_enable();
-
-    //
-    // Send a status message and give it some time to print.
-    //
-    am_util_stdio_printf("Interrupt #: %d\n", g_ui8NumWatchdogInterrupts);
-    am_util_delay_ms(100);
-
-    //
-    // Increment the number of watchdog interrupts.
-    //
-    g_ui8NumWatchdogInterrupts++;
-
-
+		am_util_stdio_printf("%.1f" "\n", velocity);
 }
 //*****************************************************************************
 //
@@ -840,6 +802,37 @@ display_init(void)
 
 //*****************************************************************************
 //
+// Write Big Number
+//
+//*****************************************************************************
+void
+write_big_number(uint32_t number, uint8_t x, uint8_t y)
+{
+		for (int i = 0; i < 3; i++)
+		{
+				am_hal_gpio_out_bit_clear(D_C_PIN);
+				uint8_t cmd = 0x40 + y + i;
+				am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
+				cmd = 0x80 + x;
+				am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
+				am_hal_gpio_out_bit_set(D_C_PIN);
+				
+//				uint32_t bytes_array[15];
+//				for(int j = 0; j < 15; j++) {
+//					bytes_array[j] = ASCII_BIG[number + i][j];
+//					am_util_stdio_printf("%d" " ",bytes_array[j]);
+//				}
+//				am_util_stdio_printf("\n");
+//				am_hal_iom_spi_write(IOM_MODULE_SPI, 0, bytes_array, 15, AM_HAL_IOM_RAW);
+				for (int j = 0; j < 15; j++) {
+						am_util_stdio_printf("%x" " ",ASCII_BIG[3 * number + i][j]);
+						am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&ASCII_BIG[3 * number + i][j], 1, AM_HAL_IOM_RAW);
+				}
+				am_util_stdio_printf("\n");
+		}
+}
+//*****************************************************************************
+//
 // Write String
 //
 //*****************************************************************************
@@ -850,7 +843,7 @@ LcdString(char *characters, uint8_t x, uint8_t y)
 	am_hal_gpio_out_bit_clear(D_C_PIN);
 	uint8_t cmd = 0x40 + y;
 	am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
-	cmd = 0x80 + y;
+	cmd = 0x80 + x;
 	am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
 	am_hal_gpio_out_bit_set(D_C_PIN);
 		
@@ -888,14 +881,7 @@ calc_velocity(float x_new, float x_old, float temp)
 		float vertical_speed_avg = 0;
 		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
 		vertical_speed_avg /= 10;
-	
-		char speed_string[10];
-		
-		am_util_stdio_sprintf((char *)&speed_string, "%.1f", vertical_speed_avg);
-		am_util_stdio_printf("%s" "\n",(char *)&speed_string);
 
-		LcdString((char *)&speed_string, 5, 3);
-		// am_util_delay_ms(50);
  	
 		return vertical_speed;
 }
@@ -949,15 +935,13 @@ main(void)
     iom_set_up();
 		
 		//
-    // STIMER init.
-    //
+		// Configure the pins for this example.
+		//
+		am_hal_gpio_pin_config(BUZZER_PIN, AM_HAL_PIN_12_TCTA0);
+		am_hal_gpio_out_bit_set(BUZZER_PIN);
 		
-		// init_cTimer();
-		// am_hal_gpio_pin_config(BUZZER_PIN, AM_HAL_PIN_12_TCTA0);
-		// am_hal_gpio_out_bit_set(BUZZER_PIN);
     stimer_init();
-		am_hal_interrupt_master_enable();
-
+		init_cTimer();
 		
 		//
     // Initialize the sensor and read the coefficients
@@ -969,6 +953,10 @@ main(void)
     //
 		display_init();
 		
+		
+		//
+		//WATCHDOGSTUFF
+		//
 
 		
 		//
