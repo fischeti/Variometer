@@ -596,32 +596,14 @@ calc_velocity(float x_new, float x_old, float temp)
 		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
 		vertical_speed_avg /= 10;
 	
-		//Print Velocity to LCD and check if speed has changed in accuracy
-		char speed_string[4];
-	
-		for(int i = 0; i < 4; i++){
-			if(speed_string[i] != 0){
-				old_speed_string_size++;
-			}
-		}
+		char speed_string[10];
 		
 		am_util_stdio_sprintf((char *)&speed_string, "%.1f", vertical_speed_avg);
-		
-		uint32_t new_speed_string_size = old_speed_string_size;
-		for(int i = 0; i < 4; i++){
-			if(speed_string[i] != 0){
-				new_speed_string_size++;
-			}
-		}
-		
-		if(old_speed_string_size != new_speed_string_size){
-			new_speed_string_zize =	old_speed_string_size;
-			//TODO: LCD reset
-		}
-		
+		am_util_stdio_printf("%s" "\n",(char *)&speed_string);
+
 		LcdString((char *)&speed_string, 5, 3);
-		am_util_stdio_printf("%.1f" "\n", vertical_speed_avg);
-	
+		// am_util_delay_ms(50);
+ 	
 		return vertical_speed;
 }
 //*****************************************************************************
@@ -696,6 +678,7 @@ main(void)
     //
     // Loop forever.
     //
+		
     while (1)
     {
         //
