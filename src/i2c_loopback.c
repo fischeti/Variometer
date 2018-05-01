@@ -1,58 +1,3 @@
-//*****************************************************************************
-//
-//! @file i2c_loopback.c
-//!
-//! @brief Example of dope ass pressure reading
-//!
-//! @verbatim
-//! PIN Fly Lead Assumptions for the I/O Master (IOM) Board (the other one):
-//! IOM0
-//!        GPIO[5] == IOM4 I2C SCL
-//!        GPIO[6] == IOM4 I2C SDA
-//!
-//! IOS
-//! PIN Fly Lead Assumptions for the I/O Slave (IOS) Board (this one):
-//!        GPIO[0] == IOS I2C SCL
-//!        GPIO[1] == IOS I2C SDA
-//! @endverbatim
-//
-//*****************************************************************************
-
-//*****************************************************************************
-//
-// Copyright (c) 2017, Ambiq Micro
-// All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-// 
-// 1. Redistributions of source code must retain the above copyright notice,
-// this list of conditions and the following disclaimer.
-// 
-// 2. Redistributions in binary form must reproduce the above copyright
-// notice, this list of conditions and the following disclaimer in the
-// documentation and/or other materials provided with the distribution.
-// 
-// 3. Neither the name of the copyright holder nor the names of its
-// contributors may be used to endorse or promote products derived from this
-// software without specific prior written permission.
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
-//
-// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
-//
-//*****************************************************************************
-
 #include "am_mcu_apollo.h"
 #include "am_bsp.h"
 #include "am_util.h"
@@ -98,6 +43,7 @@
 //
 //*****************************************************************************
 
+uint32_t old_speed_string_size = 0;
 uint32_t data_pressure = 0;
 uint32_t data_temperature = 0;
 uint32_t coeff[] = {0,0,0,0,0,0,0,0};
@@ -366,7 +312,6 @@ static void
 iom_set_up(void)
 {
 	
-	
     //
     // Enable power to IOM.
     //
@@ -616,11 +561,12 @@ LcdString(char *characters, uint8_t x, uint8_t y)
 	am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
 	am_hal_gpio_out_bit_set(D_C_PIN);
 		
+	//Note that char DataType is always terminated with a 0
   while (*characters)
   {
 		for (int index = 0; index < 5; index++)
 		{
-//			uint32_t* pui32Data = ASCII[characters++ - 0x20][index]; ((*(matrix)) + (i * COLS + j))
+	//uint32_t* pui32Data = ASCII[characters++ - 0x20][index]; ((*(matrix)) + (i * COLS + j))
 			char character = ASCII[*characters - 0x20][index];
 			am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&character, 1, AM_HAL_IOM_RAW);
 		}
@@ -650,9 +596,29 @@ calc_velocity(float x_new, float x_old, float temp)
 		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
 		vertical_speed_avg /= 10;
 	
+		//Print Velocity to LCD and check if speed has changed in accuracy
 		char speed_string[4];
+	
+		for(int i = 0; i < 4; i++){
+			if(speed_string[i] != 0){
+				old_speed_string_size++;
+			}
+		}
 		
 		am_util_stdio_sprintf((char *)&speed_string, "%.1f", vertical_speed_avg);
+		
+		uint32_t new_speed_string_size = old_speed_string_size;
+		for(int i = 0; i < 4; i++){
+			if(speed_string[i] != 0){
+				new_speed_string_size++;
+			}
+		}
+		
+		if(old_speed_string_size != new_speed_string_size){
+			new_speed_string_zize =	old_speed_string_size;
+			//TODO: LCD reset
+		}
+		
 		LcdString((char *)&speed_string, 5, 3);
 		am_util_stdio_printf("%.1f" "\n", vertical_speed_avg);
 	
