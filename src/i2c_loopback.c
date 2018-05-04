@@ -601,26 +601,26 @@ am_watchdog_isr(void)
 		temperature_string[3 + (data_temperature < 0)] = 'C';
 		LcdString(temperature_string, 40, 4);
 		
-				//
+		//
 		//BuzzerFrequencyStuff
 		//
 		uint32_t big_offset = 0;
 		uint32_t big_gradient = 2;
-		uint32_t big_frequency = big_gradient * second_digit + big_offset;
+		uint32_t big_frequency = big_gradient * first_digit + big_offset;
 		
-		// am_util_stdio_printf("This is the first digit: " "%d\n", second_digit);
+		am_util_stdio_printf("This is the first digit: " "%d\n", first_digit);
 		
-		if(second_digit > 1){
-			// am_util_stdio_printf("Changing Frequency to: " "%d\n", big_frequency);
+		if(first_digit >= 1){
+			am_util_stdio_printf("Changing Frequency to: " "%d\n", big_frequency);
 			
-			am_hal_ctimer_int_enable(AM_HAL_CTIMER_INT_TIMERA0);
 			buzzer_change_frequency(big_frequency, 200);
 		}
 		
 		else {
-			// am_util_stdio_printf(" No sound!\n");
-			am_hal_ctimer_int_clear(AM_HAL_CTIMER_INT_TIMERA0);
+			am_util_stdio_printf(" No sound!\n");
+			am_hal_ctimer_pin_disable(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
 		}
+
 
 }
 //*****************************************************************************
