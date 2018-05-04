@@ -233,6 +233,7 @@ float eye[] = {1, 0, 0, 1};
 //*****************************************************************************
 void stimer_init(void);
 void am_stimer_cmpr0_isr(void);
+void init_watchdog(void);
 void am_iomaster0_isr(void);
 void itm_start(void);
 static void iom_set_up(void);
@@ -271,30 +272,28 @@ am_hal_wdt_config_t g_sWatchdogConfig =
 void
 buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_frequency)
 {
+	
 	//
-	//Clear old Timers.
+	//Clear old Timer.
 	//
-	am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREB);
-	am_hal_ctimer_clear(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
+	// am_hal_ctimer_clear(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
+	
 	
 	//
 	//Calculate Waketime for big Frequency
 	//
-	
 	BUZZER_WAKE_INTERVAL_IN_MS = 1000 * (1.0 / desired_big_frequency);
+	
 	
 	//
 	//Calculate Counter value regarding to small Frequency
 	//
-		
 	float period_time = 1.0 / 12000;
 	float float_buzzer_timer_counter = (int)(1 / (desired_small_frequency * period_time));
 	float float_buzzer_duty_cycle = float_buzzer_timer_counter / 2;
 		
 	buzzer_ctimer_counter = (int) float_buzzer_timer_counter - 1;
 	buzzer_ctimer_duty_cycle = (int) float_buzzer_duty_cycle;
-		
-	am_util_stdio_printf("buzzer frequencies have been changed!");
 }
 
 //*****************************************************************************
@@ -305,6 +304,7 @@ buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_f
 void
 init_cTimer()
 {
+		
     //
     // Configure a timer to drive the BUZZER.
     //
@@ -341,10 +341,7 @@ am_ctimer_isr(void)
   //
   // Now set new PWM half-period for the BUZZER.
   //
-	
-  am_hal_ctimer_period_set(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA, buzzer_ctimer_counter, buzzer_ctimer_duty_cycle);
-	
-	
+	am_hal_ctimer_period_set(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA, buzzer_ctimer_counter, buzzer_ctimer_duty_cycle);	
 }
 
 
@@ -360,7 +357,7 @@ void
 stimer_init(void)
 {
     //
-    // Enable compare A interrupt in STIMER
+    // Enable compare A, B, (C) interrupt in STIMER
     //
     am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREA | AM_HAL_STIMER_INT_COMPAREB/* | AM_HAL_STIMER_INT_COMPAREC*/);
 
@@ -370,7 +367,7 @@ stimer_init(void)
     //
     am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR0);
 		am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR1);
-//		am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR2);
+		// am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR2);
 		
     //
     // Configure the STIMER and run
@@ -378,12 +375,47 @@ stimer_init(void)
     am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
     am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
 		am_hal_stimer_compare_delta_set(1, BUZZER_WAKE_INTERVAL);
-//		am_hal_stimer_compare_delta_set(2, LCD_WAKE_INTERVAL);
+		// am_hal_stimer_compare_delta_set(2, LCD_WAKE_INTERVAL);
     am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ |
                          AM_HAL_STIMER_CFG_COMPARE_A_ENABLE | 
                          AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
                          AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
 
+}
+//*****************************************************************************
+//
+// Init Watchdog Timer
+//
+//*****************************************************************************
+void
+init_watchdog(void)
+{
+		//
+    // Clear reset status register for next time we reset.
+    //
+    am_hal_reset_status_clear();
+
+    //
+    // LFRC has to be turned on for this example because the watchdog only
+    // runs off of the LFRC.
+    //
+    am_hal_clkgen_osc_start(AM_HAL_CLKGEN_OSC_LFRC);
+
+    //
+    // Configure the watchdog.
+    //
+    am_hal_wdt_init(&g_sWatchdogConfig);
+
+    //
+    // Enable the interrupt for the watchdog in the NVIC.
+    //
+    am_hal_interrupt_enable(AM_HAL_INTERRUPT_WATCHDOG);
+    am_hal_interrupt_master_enable();
+
+    //
+    // Enable the watchdog.
+    //
+    am_hal_wdt_start();
 }
 //*****************************************************************************
 //
@@ -393,43 +425,44 @@ stimer_init(void)
 void
 am_stimer_cmpr0_isr(void)
 {
-		
+		//
+		// Freeze the sTimer counter
+		//
 		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
                          AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
                          AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
 
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
     //
     // Check the timer interrupt status.
     //
     am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREA);
+	
+		//
+		// Increment compare Register A
+		//
     am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
-	
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
 
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
 	
+		//
+		// Continue sTimer counter
+		//
 		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
                          AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
                          AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
-    //
+    
+		//
     // Read the pressure data
     //
 		pressure_sensor_read();
 	
 		xt[2] = xt[0];
 	
+	
+		//
+		// Apply a Kalman filter to the pressure data
+		//
 		kalman_filter(data_pressure);
 		
-		// am_util_stdio_printf("\npressure: ");
-		// am_util_stdio_printf("%f" " ", xt[0]);
-		// am_util_stdio_printf("%f" " ", xt[1]);
-		//am_util_stdio_printf("%d" " ", data_pressure);
 }
 
 
@@ -442,21 +475,35 @@ void
 am_stimer_cmpr1_isr(void)
 {
 	
+		//
+		// Freeze the sTimer counter
+		//
 		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
                          AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
                          AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
 	
+	
+		//
+		// Set new Buzzer wake up interval
+		//
 		BUZZER_WAKE_INTERVAL = BUZZER_XT_PERIOD * BUZZER_WAKE_INTERVAL_IN_MS * 1e-3;
-    //
+    
+	
+		//
     // Check the timer interrupt status.
     //
     am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREB);
+	
+	
+		//
+		// Increment compare Register B
+		// 
     am_hal_stimer_compare_delta_set(1, BUZZER_WAKE_INTERVAL);
 
 		//
     // Toggle the cTimer.
     //
-	
+		
 		toggle_bit = !toggle_bit;
 		
 		if(toggle_bit){
@@ -467,6 +514,9 @@ am_stimer_cmpr1_isr(void)
 			am_hal_ctimer_clear(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
 		}
 		
+		//
+		// Continue sTimer counter
+		//
 		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
                          AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
                          AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
@@ -479,27 +529,34 @@ am_stimer_cmpr1_isr(void)
 void
 am_stimer_compr2_isr(void)
 {
-	
+		//
+		// Freeze the sTimer counter
+		//
 		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
                          AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
                          AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
 
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
+
 		//
     // Check the timer interrupt status.
     //
     am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREC);
+	
+	
+		//
+		// Increment compare Register C
+		// 
     am_hal_stimer_compare_delta_set(2, LCD_WAKE_INTERVAL);
 	
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
-//		am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
-
-		am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
+		// am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
+		// am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
+		// am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
+		// am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
 	
+	
+		//
+		// Continue sTimer counter
+		//
 		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
                          AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
                          AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
@@ -633,21 +690,18 @@ iom_set_up(void)
     am_hal_gpio_out_bit_set(5);
     am_hal_gpio_out_bit_set(6);
 	
+		//
+		// Configure SPI pins
+		//
 	  am_hal_gpio_pin_config(8, AM_HAL_PIN_8_M1SCK);
     am_hal_gpio_pin_config(10, AM_HAL_PIN_10_M1MOSI);
     am_hal_gpio_pin_config(12, AM_HAL_PIN_12_M1nCE0);
-
-#ifdef INTERNAL_LOOPBACK
-    am_hal_gpio_pin_config(5, AM_HAL_PIN_5_M0SCLLB | AM_HAL_GPIO_PULLUP);
-    am_hal_gpio_pin_config(6, AM_HAL_PIN_6_SLSDALB | AM_HAL_GPIO_PULLUP);
-    AM_REG(GPIO, LOOPBACK) = IOM_MODULE_I2C;
-#else
+	
+		//
+		// Configure I2C pins
+		//
     am_hal_gpio_pin_config(5, AM_HAL_PIN_5_M0SCL | AM_HAL_GPIO_PULLUP);
     am_hal_gpio_pin_config(6, AM_HAL_PIN_6_M0SDA | AM_HAL_GPIO_PULLUP);
-#endif
-
-    am_hal_iom_int_enable(IOM_MODULE_I2C, 0xFF);
-    am_hal_interrupt_enable(AM_HAL_INTERRUPT_IOMASTER0);
 
     //
     // Turn on the IOM for this operation.
@@ -715,7 +769,7 @@ pressure_sensor_read(void)
 		uint32_t receive_data_temperature = 0;
 		
 		//
-		// Set up conversion mode for OSR 512 (pressure)
+		// Set up conversion mode for OSR 4096 (pressure)
 		//
 		uint8_t cmd = CMD_ADC_CONV+CMD_ADC_4096;
 		uint32_t res = am_hal_iom_i2c_write(IOM_MODULE_I2C, MS5611_I2C_ADRESS, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
@@ -731,7 +785,6 @@ pressure_sensor_read(void)
 		// Read pressure data from sensor
 		//
 		res = am_hal_iom_i2c_read(IOM_MODULE_I2C, MS5611_I2C_ADRESS, (uint32_t *)&receive_data_pressure, 3, AM_HAL_IOM_RAW);
-		
 		
 		//
 		// Set up conversion mode for OSR 4096 (temperature)
@@ -767,11 +820,9 @@ pressure_sensor_read(void)
 		int64_t SENS = (coeff[1] << 15) + ((coeff[3]*dT) >> 8);
 		int64_t P = (((data_pressure*SENS) >> 21) - OFF) >> 15;
 		
-//		am_util_stdio_printf("\npressure: ");
-//		am_util_stdio_printf("%" PRId64 "\n", P);
-//		am_util_stdio_printf("\ntemperature: ");
-//		am_util_stdio_printf("%d", TEMP);
-		
+		//
+		// Store the data
+		//
 		data_pressure = (int32_t)P;
 		data_temperature = TEMP;
 }
@@ -793,12 +844,20 @@ kalman_filter(int32_t data)
 		P[2] += A[1]*P[3] + Q[2];
 		P[3] += Q[3];
 	
+		// y = Z - (H*x)
 		float y = data - xt[0];
+	
+		// S=(H*P*H'+R)
 		float S = P[0] + R;
+	
+		// K=P*H'*inv(S)
 		float K[] = {P[0]/S, P[2]/S};
 		
+		// xt = xt + K*y
 		xt[0] = (xt[0] + (K[0]*y));
 		xt[1] = (xt[1] + (K[1]*y));
+		
+		// P = (I-K)*P
 		P[0] = (1-K[0])*P[0];
 		P[1] = ((1-K[0])*P[1]);
 		P[2] = (P[2]-K[1]*P[0]);
@@ -825,8 +884,15 @@ display_init(void)
 		am_util_delay_us(2);
 		am_hal_gpio_out_bit_set(DRIVE_SLAVE_RESET_PIN);
 		
+		//
+		// Drive D_C Pin low to start command mode
+		//
 		am_hal_gpio_out_bit_clear(D_C_PIN);
 		am_hal_gpio_pin_config(D_C_PIN, AM_HAL_PIN_OUTPUT);
+	
+		//
+		// Configure display
+		//
 		cmd = 0x21;							// Function Set H = 1
 		am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
 		cmd = 0xbf;							// Set Vop
@@ -840,13 +906,18 @@ display_init(void)
 		cmd = 0x0c;							// Display control set normal mode D = 1, E = 0
 		am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
 
-		
+		//
+		// clear Display
+		//
 		am_hal_gpio_out_bit_set(D_C_PIN);
 		for(int i = 0; i < 6*84; i++) {
 			cmd = 0x00;							// DataWrite 
 			am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
 		}
 		
+		//
+		// Initialize basic UI elements
+		//
 		char c = (char)0x80;
 		LcdString(&c, 33, 2);
 		LcdString("m/s", 57, 2);
@@ -860,23 +931,22 @@ display_init(void)
 void
 write_big_number(uint32_t number, uint8_t x, uint8_t y)
 {
+		//
+		// print out top, middle and bottom section of a number
+		//
 		for (int i = 0; i < 3; i++)
 		{
-				am_hal_gpio_out_bit_clear(D_C_PIN);
-				uint8_t cmd = 0x40 + y + i;
-				am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
-				cmd = 0x80 + x;
-				am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
-				am_hal_gpio_out_bit_set(D_C_PIN);
 				
-//				uint32_t bytes_array[15];
-//				for(int j = 0; j < 15; j++) {
-//					bytes_array[j] = ASCII_BIG[number + i][j];
-//					am_util_stdio_printf("%d" " ",bytes_array[j]);
-//				}
-//				am_util_stdio_printf("\n");
-//				am_hal_iom_spi_write(IOM_MODULE_SPI, 0, bytes_array, 15, AM_HAL_IOM_RAW);
+				am_hal_gpio_out_bit_clear(D_C_PIN);		// command mode
+				uint8_t cmd = 0x40 + y + i;						// set y adress
+				am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
+				cmd = 0x80 + x;												// set x adress
+				am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
+				am_hal_gpio_out_bit_set(D_C_PIN);			// data transfer mode 
 			
+				//
+				// Send a horizontal section of a number
+				//
 				for (int j = 0; j < 15; j++) {
 						am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&ASCII_BIG[3 * number + i][j], 1, AM_HAL_IOM_RAW);
 				}
@@ -891,19 +961,21 @@ void
 LcdString(char *characters, uint8_t x, uint8_t y)
 {
 	
-	am_hal_gpio_out_bit_clear(D_C_PIN);
-	uint8_t cmd = 0x40 + y;
+	am_hal_gpio_out_bit_clear(D_C_PIN);		// command mode
+	uint8_t cmd = 0x40 + y;								// set y adress
 	am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
-	cmd = 0x80 + x;
+	cmd = 0x80 + x;												// set x adress
 	am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
-	am_hal_gpio_out_bit_set(D_C_PIN);
-		
-	//Note that char DataType is always terminated with a 0
+	am_hal_gpio_out_bit_set(D_C_PIN);			// data transfer mode
+	
+	//
+	// Send string to display
+	// Note that char string is always terminated with a 0
+	//
   while (*characters)
   {
 		for (int index = 0; index < 5; index++)
 		{
-	//uint32_t* pui32Data = ASCII[characters++ - 0x20][index]; ((*(matrix)) + (i * COLS + j))
 			char character = ASCII[*characters - 0x20][index];
 			am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)&character, 1, AM_HAL_IOM_RAW);
 		}
@@ -920,21 +992,29 @@ LcdString(char *characters, uint8_t x, uint8_t y)
 float
 calc_velocity(float x_new, float x_old, float temp)
 {
+		// 
+		// Calculate altitude
+		//
 		float sea_press = 101325;
 		float altitude_new = 44330.0f * (1.0f - pow(x_new / sea_press, 0.1902949f));
 		float altitude_old = 44330.0f * (1.0f - pow(x_old / sea_press, 0.1902949f));
 		altitude = (int)altitude_new;
 	
+		//
+		// Calculate vertical speed
+		//
 		float diff_altitude = altitude_new - altitude_old;
 		float vertical_speed = diff_altitude/WAKE_INTERVAL_IN_MS*1000;
 	
+		//
+		// Store last 10 veritcal speeds in array and average it
+		//
 		velocity_array[velocity_array_counter] = vertical_speed;
 		velocity_array_counter = (velocity_array_counter + 1) % 10;
 		float vertical_speed_avg = 0;
 		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
 		vertical_speed_avg /= 10;
 
- 	
 		return vertical_speed;
 }
 //*****************************************************************************
@@ -992,8 +1072,12 @@ main(void)
 		am_hal_gpio_pin_config(BUZZER_PIN, AM_HAL_PIN_12_TCTA0);
 		am_hal_gpio_out_bit_set(BUZZER_PIN);
 		
+		//
+		// Init Timers
+		//
     stimer_init();
 		init_cTimer();
+		init_watchdog();
 		
 		//
     // Initialize the sensor and read the coefficients
@@ -1004,39 +1088,6 @@ main(void)
     // Initialize display
     //
 		display_init();
-		
-		
-		//
-		//WATCHDOGSTUFF
-		//
-
-		
-		//
-    // Clear reset status register for next time we reset.
-    //
-    am_hal_reset_status_clear();
-
-    //
-    // LFRC has to be turned on for this example because the watchdog only
-    // runs off of the LFRC.
-    //
-    am_hal_clkgen_osc_start(AM_HAL_CLKGEN_OSC_LFRC);
-
-    //
-    // Configure the watchdog.
-    //
-    am_hal_wdt_init(&g_sWatchdogConfig);
-
-    //
-    // Enable the interrupt for the watchdog in the NVIC.
-    //
-    am_hal_interrupt_enable(AM_HAL_INTERRUPT_WATCHDOG);
-    am_hal_interrupt_master_enable();
-
-    //
-    // Enable the watchdog.
-    //
-    am_hal_wdt_start();
 		
 		//
     // Loop forever.

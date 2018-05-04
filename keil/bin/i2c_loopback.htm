@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\bin\i2c_loopback.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\bin\i2c_loopback.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Tue May 01 20:31:04 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Fri May 04 10:33:07 2018
 <BR><P>
 <H3>Maximum Stack Usage =        376 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -331,6 +331,7 @@ Global Symbols
 
 <P><STRONG><a name="[b1]"></a>am_hal_interrupt_master_enable</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, am_hal_interrupt.o(.emb_text))
 <BR><BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_watchdog
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_cTimer
 </UL>
 
@@ -368,7 +369,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 4<LI>Call Chain = __aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_faultisr_collect_data
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
 </UL>
 
 <P><STRONG><a name="[f9]"></a>__aeabi_memclr8</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
@@ -536,7 +537,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_tpiu_enable
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
+<BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
 </UL>
 
 <P><STRONG><a name="[5d]"></a>am_bsp_iom_enable</STRONG> (Thumb, 208 bytes, Stack size 24 bytes, am_bsp.o(i.am_bsp_iom_enable))
@@ -544,7 +545,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_enable
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;iom_set_up
+<BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;iom_set_up
 </UL>
 
 <P><STRONG><a name="[2b]"></a>am_bsp_itm_string_print</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, am_bsp.o(i.am_bsp_itm_string_print))
@@ -581,8 +582,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[ba]"></a>am_hal_clkgen_osc_start</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, am_hal_clkgen.o(i.am_hal_clkgen_osc_start))
-<BR><BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<P><STRONG><a name="[b4]"></a>am_hal_clkgen_osc_start</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, am_hal_clkgen.o(i.am_hal_clkgen_osc_start))
+<BR><BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_watchdog
 </UL>
 
 <P><STRONG><a name="[65]"></a>am_hal_clkgen_osc_stop</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, am_hal_clkgen.o(i.am_hal_clkgen_osc_stop))
@@ -702,10 +703,9 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[b0]"></a>am_hal_interrupt_enable</STRONG> (Thumb, 70 bytes, Stack size 0 bytes, am_hal_interrupt.o(i.am_hal_interrupt_enable))
-<BR><BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stimer_init
-<LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<BR><BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stimer_init
+<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_watchdog
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_cTimer
-<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;iom_set_up
 </UL>
 
 <P><STRONG><a name="[72]"></a>am_hal_iom_config</STRONG> (Thumb, 622 bytes, Stack size 40 bytes, am_hal_iom.o(i.am_hal_iom_config))
@@ -713,7 +713,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_clkgen_sysclk_get
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;iom_set_up
+<BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;iom_set_up
 </UL>
 
 <P><STRONG><a name="[5e]"></a>am_hal_iom_enable</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, am_hal_iom.o(i.am_hal_iom_enable))
@@ -762,7 +762,7 @@ Global Symbols
 <LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_master_disable
 </UL>
 <BR>[Called By]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_read
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
 </UL>
 
 <P><STRONG><a name="[7b]"></a>am_hal_iom_i2c_read_nb</STRONG> (Thumb, 226 bytes, Stack size 40 bytes, am_hal_iom.o(i.am_hal_iom_i2c_read_nb))
@@ -797,7 +797,7 @@ Global Symbols
 <LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_master_disable
 </UL>
 <BR>[Called By]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_read
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
 </UL>
 
 <P><STRONG><a name="[80]"></a>am_hal_iom_i2c_write_nb</STRONG> (Thumb, 274 bytes, Stack size 64 bytes, am_hal_iom.o(i.am_hal_iom_i2c_write_nb))
@@ -822,17 +822,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_i2c_write
 </UL>
 
-<P><STRONG><a name="[b3]"></a>am_hal_iom_int_enable</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, am_hal_iom.o(i.am_hal_iom_int_enable))
-<BR><BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;iom_set_up
-</UL>
-
 <P><STRONG><a name="[82]"></a>am_hal_iom_pwrctrl_enable</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, am_hal_iom.o(i.am_hal_iom_pwrctrl_enable))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = am_hal_iom_pwrctrl_enable &rArr; am_hal_pwrctrl_periph_enable
 </UL>
 <BR>[Calls]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_pwrctrl_periph_enable
 <LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_debug_error
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;iom_set_up
+<BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;iom_set_up
 </UL>
 
 <P><STRONG><a name="[2]"></a>am_hal_iom_sleeping_queue_flush</STRONG> (Thumb, 78 bytes, Stack size 24 bytes, am_hal_iom.o(i.am_hal_iom_sleeping_queue_flush))
@@ -891,8 +887,8 @@ Global Symbols
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_spi_write_nb
 </UL>
 
-<P><STRONG><a name="[b6]"></a>am_hal_itm_enable</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, am_hal_itm.o(i.am_hal_itm_enable))
-<BR><BR>[Called By]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
+<P><STRONG><a name="[ba]"></a>am_hal_itm_enable</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, am_hal_itm.o(i.am_hal_itm_enable))
+<BR><BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
 </UL>
 
 <P><STRONG><a name="[5f]"></a>am_hal_itm_print</STRONG> (Thumb, 48 bytes, Stack size 0 bytes, am_hal_itm.o(i.am_hal_itm_print))
@@ -949,8 +945,8 @@ Global Symbols
 <LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_i2c_read
 </UL>
 
-<P><STRONG><a name="[b9]"></a>am_hal_reset_status_clear</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, am_hal_reset.o(i.am_hal_reset_status_clear))
-<BR><BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<P><STRONG><a name="[b3]"></a>am_hal_reset_status_clear</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, am_hal_reset.o(i.am_hal_reset_status_clear))
+<BR><BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_watchdog
 </UL>
 
 <P><STRONG><a name="[66]"></a>am_hal_rtc_osc_disable</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, am_hal_rtc.o(i.am_hal_rtc_osc_disable))
@@ -967,13 +963,13 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_master_set
 <LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_master_disable
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stimer_init
+<BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stimer_init
 <LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_stimer_cmpr1_isr
 <LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_stimer_cmpr0_isr
 </UL>
 
 <P><STRONG><a name="[8f]"></a>am_hal_stimer_config</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, am_hal_stimer.o(i.am_hal_stimer_config))
-<BR><BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stimer_init
+<BR><BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stimer_init
 <LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_stimer_cmpr1_isr
 <LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_stimer_cmpr0_isr
 </UL>
@@ -984,7 +980,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[bf]"></a>am_hal_stimer_int_enable</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, am_hal_stimer.o(i.am_hal_stimer_int_enable))
-<BR><BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stimer_init
+<BR><BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stimer_init
 </UL>
 
 <P><STRONG><a name="[84]"></a>am_hal_sysctrl_sleep</STRONG> (Thumb, 218 bytes, Stack size 24 bytes, am_hal_sysctrl.o(i.am_hal_sysctrl_sleep))
@@ -1017,18 +1013,18 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_bsp_low_power_init
 </UL>
 
-<P><STRONG><a name="[bb]"></a>am_hal_wdt_init</STRONG> (Thumb, 104 bytes, Stack size 8 bytes, am_hal_wdt.o(i.am_hal_wdt_init))
+<P><STRONG><a name="[b5]"></a>am_hal_wdt_init</STRONG> (Thumb, 104 bytes, Stack size 8 bytes, am_hal_wdt.o(i.am_hal_wdt_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = am_hal_wdt_init
 </UL>
-<BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_watchdog
 </UL>
 
 <P><STRONG><a name="[a8]"></a>am_hal_wdt_int_clear</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, am_hal_wdt.o(i.am_hal_wdt_int_clear))
 <BR><BR>[Called By]<UL><LI><a href="#[b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_watchdog_isr
 </UL>
 
-<P><STRONG><a name="[bc]"></a>am_hal_wdt_start</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, am_hal_wdt.o(i.am_hal_wdt_start))
-<BR><BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<P><STRONG><a name="[b6]"></a>am_hal_wdt_start</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, am_hal_wdt.o(i.am_hal_wdt_start))
+<BR><BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_watchdog
 </UL>
 
 <P><STRONG><a name="[1d]"></a>am_stimer_cmpr0_isr</STRONG> (Thumb, 56 bytes, Stack size 8 bytes, i2c_loopback.o(i.am_stimer_cmpr0_isr))
@@ -1063,7 +1059,7 @@ Global Symbols
 <LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_clkgen_sysclk_get
 </UL>
 <BR>[Called By]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_read
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
 <LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;display_init
 </UL>
@@ -1093,12 +1089,11 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_vsprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_terminal_clear
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
-<LI><a href="#[b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_watchdog_isr
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
 </UL>
 
-<P><STRONG><a name="[b5]"></a>am_util_stdio_printf_init</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, am_util_stdio.o(i.am_util_stdio_printf_init))
-<BR><BR>[Called By]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
+<P><STRONG><a name="[b9]"></a>am_util_stdio_printf_init</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, am_util_stdio.o(i.am_util_stdio_printf_init))
+<BR><BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
 </UL>
 
 <P><STRONG><a name="[9c]"></a>am_util_stdio_sprintf</STRONG> (Thumb, 34 bytes, Stack size 32 bytes, am_util_stdio.o(i.am_util_stdio_sprintf))
@@ -1115,7 +1110,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
+<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
 </UL>
 
 <P><STRONG><a name="[9b]"></a>am_util_stdio_vsprintf</STRONG> (Thumb, 932 bytes, Stack size 96 bytes, am_util_stdio.o(i.am_util_stdio_vsprintf))
@@ -1136,11 +1131,10 @@ Global Symbols
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
 </UL>
 
-<P><STRONG><a name="[b]"></a>am_watchdog_isr</STRONG> (Thumb, 332 bytes, Stack size 40 bytes, i2c_loopback.o(i.am_watchdog_isr))
+<P><STRONG><a name="[b]"></a>am_watchdog_isr</STRONG> (Thumb, 306 bytes, Stack size 40 bytes, i2c_loopback.o(i.am_watchdog_isr))
 <BR><BR>[Stack]<UL><LI>Max Depth = 376<LI>Call Chain = am_watchdog_isr &rArr; calc_velocity &rArr; __hardfp_pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_sprintf
-<LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
 <LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_wdt_int_clear
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_big_number
 <LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
@@ -1189,12 +1183,25 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[b4]"></a>itm_start</STRONG> (Thumb, 82 bytes, Stack size 8 bytes, i2c_loopback.o(i.itm_start))
+<P><STRONG><a name="[b2]"></a>init_watchdog</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, i2c_loopback.o(i.init_watchdog))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = init_watchdog &rArr; am_hal_wdt_init
+</UL>
+<BR>[Calls]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_wdt_start
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_wdt_init
+<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_reset_status_clear
+<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_master_enable
+<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_enable
+<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_clkgen_osc_start
+</UL>
+<BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[b8]"></a>itm_start</STRONG> (Thumb, 82 bytes, Stack size 8 bytes, i2c_loopback.o(i.itm_start))
 <BR><BR>[Stack]<UL><LI>Max Depth = 292<LI>Call Chain = itm_start &rArr; am_util_stdio_terminal_clear &rArr; am_util_stdio_printf &rArr; am_util_stdio_vsprintf &rArr; ftoa &rArr; uint64_to_str &rArr; divu64_10
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_terminal_clear
-<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf_init
-<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_itm_enable
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf_init
+<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_itm_enable
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_bsp_debug_printf_enable
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -1206,32 +1213,28 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_stimer_cmpr0_isr
 </UL>
 
-<P><STRONG><a name="[39]"></a>main</STRONG> (Thumb, 168 bytes, Stack size 8 bytes, i2c_loopback.o(i.main))
+<P><STRONG><a name="[39]"></a>main</STRONG> (Thumb, 142 bytes, Stack size 8 bytes, i2c_loopback.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 344<LI>Call Chain = main &rArr; pressure_sensor_init &rArr; pressure_sensor_read &rArr; am_hal_iom_i2c_write &rArr; am_hal_iom_i2c_write_nq &rArr; am_hal_i2c_bit_bang_send &rArr; i2c_send_byte &rArr; i2c_pull_and_wait_scl_hi
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_terminal_clear
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_delay_ms
-<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_wdt_start
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_wdt_init
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_sysctrl_sleep
-<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_reset_status_clear
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_master_enable
-<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_enable
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_clkgen_sysclk_select
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_clkgen_osc_start
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_cachectrl_enable
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_bsp_low_power_init
-<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stimer_init
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
-<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stimer_init
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
+<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itm_start
+<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_watchdog
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_cTimer
 <LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;display_init
-<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;iom_set_up
+<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;iom_set_up
 </UL>
 <BR>[Called By]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[b8]"></a>pressure_sensor_init</STRONG> (Thumb, 186 bytes, Stack size 56 bytes, i2c_loopback.o(i.pressure_sensor_init))
+<P><STRONG><a name="[bc]"></a>pressure_sensor_init</STRONG> (Thumb, 186 bytes, Stack size 56 bytes, i2c_loopback.o(i.pressure_sensor_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 336<LI>Call Chain = pressure_sensor_init &rArr; pressure_sensor_read &rArr; am_hal_iom_i2c_write &rArr; am_hal_iom_i2c_write_nq &rArr; am_hal_i2c_bit_bang_send &rArr; i2c_send_byte &rArr; i2c_pull_and_wait_scl_hi
 </UL>
 <BR>[Calls]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
@@ -1251,7 +1254,7 @@ Global Symbols
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_i2c_write
 <LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_i2c_read
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
+<BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
 <LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_stimer_cmpr0_isr
 </UL>
 
@@ -1264,7 +1267,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_pow
 </UL>
 
-<P><STRONG><a name="[b7]"></a>stimer_init</STRONG> (Thumb, 58 bytes, Stack size 8 bytes, i2c_loopback.o(i.stimer_init))
+<P><STRONG><a name="[bb]"></a>stimer_init</STRONG> (Thumb, 58 bytes, Stack size 8 bytes, i2c_loopback.o(i.stimer_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = stimer_init &rArr; am_hal_stimer_compare_delta_set
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_stimer_int_enable
@@ -1502,13 +1505,11 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[b2]"></a>iom_set_up</STRONG> (Thumb, 428 bytes, Stack size 8 bytes, i2c_loopback.o(i.iom_set_up))
+<P><STRONG><a name="[b7]"></a>iom_set_up</STRONG> (Thumb, 414 bytes, Stack size 8 bytes, i2c_loopback.o(i.iom_set_up))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = iom_set_up &rArr; am_hal_iom_config
 </UL>
 <BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_pwrctrl_enable
-<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_int_enable
 <LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_config
-<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_enable
 <LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_bsp_iom_enable
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
