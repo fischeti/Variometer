@@ -3516,11 +3516,11 @@
       <ActiveTab>0</ActiveTab>
       <Doc>
         <Name>../src/i2c_loopback.c</Name>
-        <ColumnNumber>19</ColumnNumber>
-        <TopLine>625</TopLine>
-        <CurrentLine>1090</CurrentLine>
+        <ColumnNumber>1</ColumnNumber>
+        <TopLine>478</TopLine>
+        <CurrentLine>867</CurrentLine>
         <Folding>1</Folding>
-        <ContractedFolders>70,173,253,273,305,334,357,610,623,636,672,721,835,932,961</ContractedFolders>
+        <ContractedFolders>70,173,253,273,305,334,357,610,623,636,672,721,874,934,963,995</ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
       <Doc>

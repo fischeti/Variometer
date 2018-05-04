@@ -58,13 +58,13 @@ uint32_t toggle_bit = 1;
 // Data Storage
 //
 //*****************************************************************************
-
 uint32_t old_speed_string_size = 0;
 uint32_t data_pressure = 0;
 int32_t data_temperature = 0;
 uint32_t altitude = 0;
 uint32_t coeff[] = {0,0,0,0,0,0,0,0};
 int32_t pressure_and_temperature[] = {0,0};
+float altitude_old = 0;
 float velocity_array[] = {0,0,0,0,0,0,0,0,0,0};
 uint8_t velocity_array_counter = 0;
 static const uint8_t ASCII[][5] =
@@ -862,6 +862,8 @@ kalman_filter(int32_t data)
 		P[1] = ((1-K[0])*P[1]);
 		P[2] = (P[2]-K[1]*P[0]);
 		P[3] = (P[3]-K[1]*P[1]);
+		
+		am_util_stdio_printf("%f", xt[0]);
 }
 //*****************************************************************************
 //
@@ -997,7 +999,6 @@ calc_velocity(float x_new, float x_old, float temp)
 		//
 		float sea_press = 101325;
 		float altitude_new = 44330.0f * (1.0f - pow(x_new / sea_press, 0.1902949f));
-		float altitude_old = 44330.0f * (1.0f - pow(x_old / sea_press, 0.1902949f));
 		altitude = (int)altitude_new;
 	
 		//
@@ -1005,6 +1006,11 @@ calc_velocity(float x_new, float x_old, float temp)
 		//
 		float diff_altitude = altitude_new - altitude_old;
 		float vertical_speed = diff_altitude/WAKE_INTERVAL_IN_MS*1000;
+	
+		//
+		// Store altitude
+		//
+		altitude_old = altitude_new;
 	
 		//
 		// Store last 10 veritcal speeds in array and average it
