@@ -274,11 +274,10 @@ buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_f
 {
 	
 	//
-	//Clear old Timer.
+	//Enable Timer Pin
 	//
-	// am_hal_ctimer_clear(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
-	
-	
+	am_hal_ctimer_pin_enable(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA); 
+
 	//
 	//Calculate Waketime for big Frequency
 	//
@@ -295,6 +294,7 @@ buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_f
 	buzzer_ctimer_counter = (int) float_buzzer_timer_counter - 1;
 	buzzer_ctimer_duty_cycle = (int) float_buzzer_duty_cycle;
 }
+
 
 //*****************************************************************************
 //
@@ -593,12 +593,14 @@ am_watchdog_isr(void)
 		char altitude_string[5];
 		am_util_stdio_sprintf(altitude_string, "%d", altitude);
 		altitude_string[3 + ((altitude / 1000) > 0)] = 'm';
+		am_util_stdio_printf("%s\n",altitude_string);
 		LcdString(altitude_string, 0, 4);
 		
 		char temperature_string[] = "     ";
 		am_util_stdio_sprintf(temperature_string, "%d", data_temperature / 100);
 		temperature_string[2 + (data_temperature < 0)] = 0x81;
 		temperature_string[3 + (data_temperature < 0)] = 'C';
+		am_util_stdio_printf("%s\n",temperature_string);
 		LcdString(temperature_string, 40, 4);
 		
 		//
