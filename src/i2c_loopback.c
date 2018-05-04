@@ -608,17 +608,17 @@ am_watchdog_isr(void)
 		uint32_t big_gradient = 2;
 		uint32_t big_frequency = big_gradient * second_digit + big_offset;
 		
-		am_util_stdio_printf("This is the first digit: " "%d\n", second_digit);
+		// am_util_stdio_printf("This is the first digit: " "%d\n", second_digit);
 		
 		if(second_digit > 1){
-			am_util_stdio_printf("Changing Frequency to: " "%d\n", big_frequency);
+			// am_util_stdio_printf("Changing Frequency to: " "%d\n", big_frequency);
 			
 			am_hal_ctimer_int_enable(AM_HAL_CTIMER_INT_TIMERA0);
 			buzzer_change_frequency(big_frequency, 200);
 		}
 		
 		else {
-			am_util_stdio_printf(" No sound!\n");
+			// am_util_stdio_printf(" No sound!\n");
 			am_hal_ctimer_int_clear(AM_HAL_CTIMER_INT_TIMERA0);
 		}
 
@@ -741,14 +741,13 @@ iom_set_up(void)
 void
 pressure_sensor_init(void)
 {
-		am_util_stdio_printf("initializing sensor...\n");
-		
+	
 		//
 		// Send reset command
 		//
 		uint8_t cmd = CMD_RESET;
 		uint32_t res = am_hal_iom_i2c_write(IOM_MODULE_I2C, MS5611_I2C_ADRESS, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
-		
+	
 		//
 		// Check if reset was succesful
 		//
@@ -756,8 +755,6 @@ pressure_sensor_init(void)
 				am_util_stdio_printf("initialization not succesfull\n");
 		}
 		else {
-			
-				am_util_stdio_printf("initialization succesfull\n");
 			
 				uint32_t receive_coeff[] = {0,0,0,0,0,0,0,0};
 				
@@ -884,7 +881,7 @@ kalman_filter(int32_t data)
 		P[2] = (P[2]-K[1]*P[0]);
 		P[3] = (P[3]-K[1]*P[1]);
 		
-		am_util_stdio_printf("%f", xt[0]);
+		am_util_stdio_printf("%f %d\n", xt[0], data);
 }
 //*****************************************************************************
 //
