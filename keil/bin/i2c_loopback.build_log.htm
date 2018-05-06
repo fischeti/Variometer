@@ -22,20 +22,22 @@ Dialog DLL:      TCM.DLL V1.32.0.0
  
 <h2>Project:</h2>
 C:\AmbiqMicro\AmbiqSuite\boards\apollo2_evb\examples\variometer\keil\i2c_loopback.uvprojx
-Project File Date:  05/01/2018
+Project File Date:  05/06/2018
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'i2c_loopback'
 compiling i2c_loopback.c...
-../src/i2c_loopback.c(587): warning:  #223-D: function "abs" declared implicitly
-  		uint32_t first_digit = abs((int)velocity) % 10;
-../src/i2c_loopback.c: 1 warning, 0 errors
+../src/i2c_loopback.c(608): warning:  #223-D: function "abs" declared implicitly
+  		uint32_t first_digit = abs((int32_t)velocity) % 10;
+../src/i2c_loopback.c(883): warning:  #177-D: variable "temp_1_2"  was declared but never referenced
+  			arm_matrix_instance_f32 temp_1_2 = {1, 2, (float32_t *)temp_1_2_init};
+../src/i2c_loopback.c: 2 warnings, 0 errors
 linking...
-Program Size: Code=24308 RO-data=1300 RW-data=348 ZI-data=4988  
+Program Size: Code=29416 RO-data=1392 RW-data=360 ZI-data=4976  
 After Build - User command #1: fromelf --bin --output bin\i2c_loopback.bin bin\i2c_loopback.axf
 After Build - User command #2: fromelf -cedrst --output bin\i2c_loopback.txt bin\i2c_loopback.axf
-".\bin\i2c_loopback.axf" - 0 Error(s), 1 Warning(s).
+".\bin\i2c_loopback.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -49,7 +51,7 @@ Package Vendor: AmbiqMicro
   C:\Keil_v5\ARM\PACK\AmbiqMicro\Apollo_DFP\1.0.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

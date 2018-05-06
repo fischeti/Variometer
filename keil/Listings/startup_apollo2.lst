@@ -1,0 +1,1180 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;*******************************************************
+                       ***********************
+    2 00000000         ;
+    3 00000000         ;! @file startup_Apollo2.s
+    4 00000000         ;!
+    5 00000000         ;! @brief Definitions for Apollo2 interrupt handlers, th
+                       e vector table, and the stack.
+    6 00000000         ;
+    7 00000000         ;*******************************************************
+                       ***********************
+    8 00000000         
+    9 00000000         ;*******************************************************
+                       ***********************
+   10 00000000         ;
+   11 00000000         ; Copyright (c) 2017, Ambiq Micro
+   12 00000000         ; All rights reserved.
+   13 00000000         ; 
+   14 00000000         ; Redistribution and use in source and binary forms, wit
+                       h or without
+   15 00000000         ; modification, are permitted provided that the followin
+                       g conditions are met:
+   16 00000000         ; 
+   17 00000000         ; 1. Redistributions of source code must retain the abov
+                       e copyright notice,
+   18 00000000         ; this list of conditions and the following disclaimer.
+   19 00000000         ; 
+   20 00000000         ; 2. Redistributions in binary form must reproduce the a
+                       bove copyright
+   21 00000000         ; notice, this list of conditions and the following disc
+                       laimer in the
+   22 00000000         ; documentation and/or other materials provided with the
+                        distribution.
+   23 00000000         ; 
+   24 00000000         ; 3. Neither the name of the copyright holder nor the na
+                       mes of its
+   25 00000000         ; contributors may be used to endorse or promote product
+                       s derived from this
+   26 00000000         ; software without specific prior written permission.
+   27 00000000         ; 
+   28 00000000         ; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+                        CONTRIBUTORS "AS IS"
+   29 00000000         ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT 
+                       NOT LIMITED TO, THE
+   30 00000000         ; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR 
+                       A PARTICULAR PURPOSE
+   31 00000000         ; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER
+                        OR CONTRIBUTORS BE
+   32 00000000         ; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+                       EXEMPLARY, OR
+   33 00000000         ; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+                       PROCUREMENT OF
+   34 00000000         ; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PR
+                       OFITS; OR BUSINESS
+   35 00000000         ; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIAB
+                       ILITY, WHETHER IN
+   36 00000000         ; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGE
+                       NCE OR OTHERWISE)
+   37 00000000         ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EV
+                       EN IF ADVISED OF THE
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   38 00000000         ; POSSIBILITY OF SUCH DAMAGE.
+   39 00000000         ;
+   40 00000000         ; This is part of revision 0 of the AmbiqSuite Developme
+                       nt Package.
+   41 00000000         ;
+   42 00000000         ;*******************************************************
+                       ***********************
+   43 00000000         
+   44 00000000         ;*******************************************************
+                       ***********************
+   45 00000000         ;
+   46 00000000         ; <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
+   47 00000000         ;*******************************************************
+                       *****************
+   48 00000000 00000200 
+                       Stack   EQU              0x00000200
+   49 00000000         
+   50 00000000         ;*******************************************************
+                       ***********************
+   51 00000000         ;
+   52 00000000         ; <o> Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
+   53 00000000         ;
+   54 00000000         ;*******************************************************
+                       ***********************
+   55 00000000 00000000 
+                       Heap    EQU              0x00000000
+   56 00000000         
+   57 00000000         ;*******************************************************
+                       ***********************
+   58 00000000         ;
+   59 00000000         ; Allocate space for the stack.
+   60 00000000         ;
+   61 00000000         ;*******************************************************
+                       ***********************
+   62 00000000                 AREA             STACK, NOINIT, READWRITE, ALIGN
+=3
+   63 00000000         StackMem
+   64 00000000                 SPACE            Stack
+   65 00000200         __initial_sp
+   66 00000200         
+   67 00000200         ;*******************************************************
+                       ***********************
+   68 00000200         ;
+   69 00000200         ; Allocate space for the heap.
+   70 00000200         ;
+   71 00000200         ;*******************************************************
+                       ***********************
+   72 00000200                 AREA             HEAP, NOINIT, READWRITE, ALIGN=
+3
+   73 00000000         __heap_base
+   74 00000000         HeapMem
+   75 00000000                 SPACE            Heap
+   76 00000000         __heap_limit
+   77 00000000         
+   78 00000000         ;*******************************************************
+                       ***********************
+   79 00000000         ;
+   80 00000000         ; Indicate that the code in this file preserves 8-byte a
+                       lignment of the stack.
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   81 00000000         ;
+   82 00000000         ;*******************************************************
+                       ***********************
+   83 00000000                 PRESERVE8
+   84 00000000         
+   85 00000000         ;*******************************************************
+                       ***********************
+   86 00000000         ;
+   87 00000000         ; Place code into the reset code section.
+   88 00000000         ;
+   89 00000000         ;*******************************************************
+                       ***********************
+   90 00000000                 AREA             RESET, CODE, READONLY
+   91 00000000                 THUMB
+   92 00000000         
+   93 00000000         ;*******************************************************
+                       ***********************
+   94 00000000         ;
+   95 00000000         ; The vector table.
+   96 00000000         ;
+   97 00000000         ;*******************************************************
+                       ***********************
+   98 00000000                 EXPORT           __Vectors
+   99 00000000         __Vectors
+  100 00000000 00000200        DCD              StackMem + Stack ; Top of Stack
+                                                            
+  101 00000004 00000000        DCD              Reset_Handler ; Reset Handler
+  102 00000008 00000000        DCD              am_nmi_isr  ; NMI Handler
+  103 0000000C 00000000        DCD              am_fault_isr ; Hard Fault Handl
+                                                            er
+  104 00000010 00000000        DCD              am_mpufault_isr ; The MPU fault
+                                                             handler
+  105 00000014 00000000        DCD              am_busfault_isr ; The bus fault
+                                                             handler
+  106 00000018 00000000        DCD              am_usagefault_isr ; The usage f
+                                                            ault handler
+  107 0000001C 00000000        DCD              0           ; Reserved
+  108 00000020 00000000        DCD              0           ; Reserved
+  109 00000024 00000000        DCD              0           ; Reserved
+  110 00000028 00000000        DCD              0           ; Reserved
+  111 0000002C 00000000        DCD              am_svcall_isr ; SVCall handler
+  112 00000030 00000000        DCD              am_debugmon_isr ; Debug monitor
+                                                             handler
+  113 00000034 00000000        DCD              0           ; Reserved
+  114 00000038 00000000        DCD              am_pendsv_isr ; The PendSV hand
+                                                            ler
+  115 0000003C 00000000        DCD              am_systick_isr ; The SysTick ha
+                                                            ndler
+  116 00000040         
+  117 00000040         ; Peripheral Interrupts
+  118 00000040 00000000        DCD              am_brownout_isr ;  0: Reserved
+  119 00000044 00000000        DCD              am_watchdog_isr ;  1: Reserved
+  120 00000048 00000000        DCD              am_clkgen_isr ;  2: CLKGEN
+  121 0000004C 00000000        DCD              am_vcomp_isr ;  3: Voltage Comp
+                                                            arator
+  122 00000050 00000000        DCD              am_ioslave_ios_isr ;  4: I/O Sl
+                                                            ave general
+  123 00000054 00000000        DCD              am_ioslave_acc_isr ;  5: I/O Sl
+                                                            ave access
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  124 00000058 00000000        DCD              am_iomaster0_isr 
+                                                            ;  6: I/O Master 0
+  125 0000005C 00000000        DCD              am_iomaster1_isr 
+                                                            ;  7: I/O Master 1
+  126 00000060 00000000        DCD              am_iomaster2_isr 
+                                                            ;  8: I/O Master 2
+  127 00000064 00000000        DCD              am_iomaster3_isr 
+                                                            ;  9: I/O Master 3
+  128 00000068 00000000        DCD              am_iomaster4_isr 
+                                                            ; 10: I/O Master 4
+  129 0000006C 00000000        DCD              am_iomaster5_isr 
+                                                            ; 11: I/O Master 5
+  130 00000070 00000000        DCD              am_gpio_isr ; 12: GPIO
+  131 00000074 00000000        DCD              am_ctimer_isr ; 13: CTIMER
+  132 00000078 00000000        DCD              am_uart_isr ; 14: UART0
+  133 0000007C 00000000        DCD              am_uart1_isr ; 15: UART1
+  134 00000080 00000000        DCD              am_adc_isr  ; 16: ADC
+  135 00000084 00000000        DCD              am_pdm_isr  ; 17: PDM
+  136 00000088 00000000        DCD              am_stimer_isr 
+                                                            ; 18: SYSTEM TIMER
+  137 0000008C 00000000        DCD              am_stimer_cmpr0_isr ; 19: SYSTE
+                                                            M TIMER COMPARE0
+  138 00000090 00000000        DCD              am_stimer_cmpr1_isr ; 20: SYSTE
+                                                            M TIMER COMPARE1
+  139 00000094 00000000        DCD              am_stimer_cmpr2_isr ; 21: SYSTE
+                                                            M TIMER COMPARE2
+  140 00000098 00000000        DCD              am_stimer_cmpr3_isr ; 22: SYSTE
+                                                            M TIMER COMPARE3
+  141 0000009C 00000000        DCD              am_stimer_cmpr4_isr ; 23: SYSTE
+                                                            M TIMER COMPARE4
+  142 000000A0 00000000        DCD              am_stimer_cmpr5_isr ; 24: SYSTE
+                                                            M TIMER COMPARE5
+  143 000000A4 00000000        DCD              am_stimer_cmpr6_isr ; 25: SYSTE
+                                                            M TIMER COMPARE6
+  144 000000A8 00000000        DCD              am_stimer_cmpr7_isr ; 26: SYSTE
+                                                            M TIMER COMPARE7
+  145 000000AC 00000000        DCD              am_flash_isr ; 27: FLASH
+  146 000000B0 00000000        DCD              am_software0_isr 
+                                                            ; 28: SOFTWARE0
+  147 000000B4 00000000        DCD              am_software1_isr 
+                                                            ; 29: SOFTWARE1
+  148 000000B8 00000000        DCD              am_software2_isr 
+                                                            ; 30: SOFTWARE2
+  149 000000BC 00000000        DCD              am_software3_isr 
+                                                            ; 31: SOFTWARE3
+  150 000000C0         
+  151 000000C0         __Vectors_End
+  152 000000C0         
+  153 000000C0 000000C0 
+                       __Vectors_Size
+                               EQU              __Vectors_End - __Vectors
+  154 000000C0         
+  155 000000C0         ;*******************************************************
+                       ***********************
+  156 000000C0         ;
+  157 000000C0         ; This is the code that gets called when the processor f
+                       irst starts execution
+  158 000000C0         ; following a reset event.
+  159 000000C0         ;
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  160 000000C0         ;*******************************************************
+                       ***********************
+  161 000000C0         Reset_Handler
+                               PROC
+  162 000000C0                 EXPORT           Reset_Handler               [WE
+AK]
+  163 000000C0                 IMPORT           __main
+  164 000000C0         
+  165 000000C0         ; Enable the FPU.
+  166 000000C0 F64E 5088       MOVW             R0, #0xED88
+  167 000000C4 F2CE 0000       MOVT             R0, #0xE000
+  168 000000C8 6801            LDR              R1, [R0]
+  169 000000CA F441 0170       ORR              R1, #0x00F00000
+  170 000000CE 6001            STR              R1, [R0]
+  171 000000D0 F3BF 8F4F       DSB
+  172 000000D4 F3BF 8F6F       ISB
+  173 000000D8         
+  174 000000D8         ; Branch to main.
+  175 000000D8 4804            LDR              R0, =__main
+  176 000000DA 4700            BX               R0
+  177 000000DC         
+  178 000000DC                 ENDP
+  179 000000DC         
+  180 000000DC         ;*******************************************************
+                       ***********************
+  181 000000DC         ;
+  182 000000DC         ; Weak Exception Handlers.
+  183 000000DC         ;
+  184 000000DC         ;*******************************************************
+                       ***********************
+  185 000000DC         am_nmi_isr
+                               PROC
+  186 000000DC                 EXPORT           am_nmi_isr                  [WE
+AK]
+  187 000000DC E7FE            B                .
+  188 000000DE                 ENDP
+  190 000000DE         am_fault_isr
+                               PROC
+  191 000000DE                 EXPORT           am_fault_isr                [WE
+AK]
+  192 000000DE E7FE            B                .
+  193 000000E0                 ENDP
+  195 000000E0         am_memmanage_isr
+                               PROC
+  196 000000E0                 EXPORT           am_memmanage_isr            [WE
+AK]
+  197 000000E0 E7FE            B                .
+  198 000000E2                 ENDP
+  200 000000E2         am_mpufault_isr
+                               PROC
+  201 000000E2                 EXPORT           am_mpufault_isr             [WE
+AK]
+  202 000000E2 E7FE            B                .
+  203 000000E4                 ENDP
+  205 000000E4         am_busfault_isr
+                               PROC
+  206 000000E4                 EXPORT           am_busfault_isr             [WE
+AK]
+  207 000000E4 E7FE            B                .
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  208 000000E6                 ENDP
+  210 000000E6         am_usagefault_isr
+                               PROC
+  211 000000E6                 EXPORT           am_usagefault_isr           [WE
+AK]
+  212 000000E6 E7FE            B                .
+  213 000000E8                 ENDP
+  215 000000E8         am_default_isr
+                               PROC
+  216 000000E8                 EXPORT           am_svcall_isr               [WE
+AK]
+  217 000000E8                 EXPORT           am_debugmon_isr             [WE
+AK]
+  218 000000E8                 EXPORT           am_pendsv_isr               [WE
+AK]
+  219 000000E8                 EXPORT           am_systick_isr              [WE
+AK]
+  220 000000E8                 EXPORT           am_brownout_isr             [WE
+AK]
+  221 000000E8                 EXPORT           am_adc_isr                  [WE
+AK]
+  222 000000E8                 EXPORT           am_watchdog_isr             [WE
+AK]
+  223 000000E8                 EXPORT           am_clkgen_isr               [WE
+AK]
+  224 000000E8                 EXPORT           am_vcomp_isr                [WE
+AK]
+  225 000000E8                 EXPORT           am_ioslave_ios_isr          [WE
+AK]
+  226 000000E8                 EXPORT           am_ioslave_acc_isr          [WE
+AK]
+  227 000000E8                 EXPORT           am_iomaster0_isr            [WE
+AK]
+  228 000000E8                 EXPORT           am_iomaster1_isr            [WE
+AK]
+  229 000000E8                 EXPORT           am_iomaster2_isr            [WE
+AK]
+  230 000000E8                 EXPORT           am_iomaster3_isr            [WE
+AK]
+  231 000000E8                 EXPORT           am_iomaster4_isr            [WE
+AK]
+  232 000000E8                 EXPORT           am_iomaster5_isr            [WE
+AK]
+  233 000000E8                 EXPORT           am_gpio_isr                 [WE
+AK]
+  234 000000E8                 EXPORT           am_ctimer_isr               [WE
+AK]
+  235 000000E8                 EXPORT           am_uart_isr                 [WE
+AK]
+  236 000000E8                 EXPORT           am_uart0_isr                [WE
+AK]
+  237 000000E8                 EXPORT           am_uart1_isr                [WE
+AK]
+  238 000000E8                 EXPORT           am_pdm_isr                  [WE
+AK]
+  239 000000E8                 EXPORT           am_stimer_isr               [WE
+AK]
+  240 000000E8                 EXPORT           am_stimer_cmpr0_isr         [WE
+AK]
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+  241 000000E8                 EXPORT           am_stimer_cmpr1_isr         [WE
+AK]
+  242 000000E8                 EXPORT           am_stimer_cmpr2_isr         [WE
+AK]
+  243 000000E8                 EXPORT           am_stimer_cmpr3_isr         [WE
+AK]
+  244 000000E8                 EXPORT           am_stimer_cmpr4_isr         [WE
+AK]
+  245 000000E8                 EXPORT           am_stimer_cmpr5_isr         [WE
+AK]
+  246 000000E8                 EXPORT           am_stimer_cmpr6_isr         [WE
+AK]
+  247 000000E8                 EXPORT           am_stimer_cmpr7_isr         [WE
+AK]
+  248 000000E8                 EXPORT           am_flash_isr                [WE
+AK]
+  249 000000E8                 EXPORT           am_software0_isr            [WE
+AK]
+  250 000000E8                 EXPORT           am_software1_isr            [WE
+AK]
+  251 000000E8                 EXPORT           am_software2_isr            [WE
+AK]
+  252 000000E8                 EXPORT           am_software3_isr            [WE
+AK]
+  253 000000E8         
+  254 000000E8         am_svcall_isr
+  255 000000E8         am_debugmon_isr
+  256 000000E8         am_pendsv_isr
+  257 000000E8         am_systick_isr
+  258 000000E8         am_brownout_isr
+  259 000000E8         am_adc_isr
+  260 000000E8         am_watchdog_isr
+  261 000000E8         am_clkgen_isr
+  262 000000E8         am_vcomp_isr
+  263 000000E8         am_ioslave_ios_isr
+  264 000000E8         am_ioslave_acc_isr
+  265 000000E8         am_iomaster0_isr
+  266 000000E8         am_iomaster1_isr
+  267 000000E8         am_iomaster2_isr
+  268 000000E8         am_iomaster3_isr
+  269 000000E8         am_iomaster4_isr
+  270 000000E8         am_iomaster5_isr
+  271 000000E8         am_gpio_isr
+  272 000000E8         am_ctimer_isr
+  273 000000E8         am_uart_isr
+  274 000000E8         am_uart0_isr
+  275 000000E8         am_uart1_isr
+  276 000000E8         am_pdm_isr
+  277 000000E8         am_stimer_isr
+  278 000000E8         am_stimer_cmpr0_isr
+  279 000000E8         am_stimer_cmpr1_isr
+  280 000000E8         am_stimer_cmpr2_isr
+  281 000000E8         am_stimer_cmpr3_isr
+  282 000000E8         am_stimer_cmpr4_isr
+  283 000000E8         am_stimer_cmpr5_isr
+  284 000000E8         am_stimer_cmpr6_isr
+  285 000000E8         am_stimer_cmpr7_isr
+  286 000000E8         am_flash_isr
+  287 000000E8         am_software0_isr
+
+
+
+ARM Macro Assembler    Page 8 
+
+
+  288 000000E8         am_software1_isr
+  289 000000E8         am_software2_isr
+  290 000000E8         am_software3_isr
+  291 000000E8         
+  292 000000E8         ; all device interrupts go here unless the weak label is
+                        over
+  293 000000E8         ; ridden in the linker hard spin so the debugger will kn
+                       ow it
+  294 000000E8         ; was an unhandled interrupt request a come-from-buffer 
+                       or
+  295 000000E8         ; instruction trace hardware would sure be nice if you g
+                       et here
+  296 000000E8 E7FE            B                .
+  297 000000EA         
+  298 000000EA                 ENDP
+  299 000000EA         
+  300 000000EA         ;*******************************************************
+                       ***********************
+  301 000000EA         ;
+  302 000000EA         ; Align the end of the section.
+  303 000000EA         ;
+  304 000000EA         ;*******************************************************
+                       ***********************
+  305 000000EA 00 00           ALIGN
+  306 000000EC         
+  307 000000EC         ;*******************************************************
+                       ***********************
+  308 000000EC         ;
+  309 000000EC         ; Initialization of the heap and stack.
+  310 000000EC         ;
+  311 000000EC         ;*******************************************************
+                       ***********************
+  312 000000EC 00000000        AREA             |.text|, CODE, READONLY
+  313 00000000         
+  314 00000000         ;*******************************************************
+                       ***********************
+  315 00000000         ;
+  316 00000000         ; User Initial Stack & Heap.
+  317 00000000         ;
+  318 00000000         ;*******************************************************
+                       ***********************
+  319 00000000                 IF               :DEF: __MICROLIB
+  324 00000000                 IMPORT           __use_two_region_memory
+  325 00000000                 EXPORT           __user_initial_stackheap
+  326 00000000         __user_initial_stackheap
+                               PROC
+  327 00000000 4802            LDR              R0, =HeapMem
+  328 00000002 4903            LDR              R1, =(StackMem + Stack)
+  329 00000004 4A01            LDR              R2, =(HeapMem + Heap)
+  330 00000006 4B03            LDR              R3, =StackMem
+  331 00000008 4770            BX               LR
+  332 0000000A         
+  333 0000000A                 ENDP
+  334 0000000A         
+  335 0000000A                 ENDIF
+  336 0000000A         
+  337 0000000A         ;*******************************************************
+                       ***********************
+  338 0000000A         ;
+
+
+
+ARM Macro Assembler    Page 9 
+
+
+  339 0000000A         ; Align the end of the section.
+  340 0000000A         ;
+  341 0000000A         ;*******************************************************
+                       ***********************
+  342 0000000A 00 00           ALIGN
+  343 0000000C         
+  344 0000000C         ;*******************************************************
+                       ***********************
+  345 0000000C         ;
+  346 0000000C         ; All Done
+  347 0000000C         ;
+  348 0000000C         ;*******************************************************
+                       ***********************
+  349 0000000C                 END
+              00000000 
+              00000200 
+              00000000 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\bin\startup_apollo2.d -o.\bin\startup_apollo2.o -I.\RTE\Devic
+e\AMAPH1KK-KBR -I.\RTE\_i2c_loopback -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSI
+S\Include -IC:\Keil_v5\ARM\PACK\AmbiqMicro\Apollo_DFP\1.0.0\Device\Include --pr
+edefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 524" --predefine="_
+RTE_ SETA 1" --predefine="APOLLO2_1024 SETA 1" --list=.\listings\startup_apollo
+2.lst RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+STACK 00000000
+
+Symbol: STACK
+   Definitions
+      At line 62 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      None
+Comment: STACK unused
+StackMem 00000000
+
+Symbol: StackMem
+   Definitions
+      At line 63 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 100 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 328 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 330 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+__initial_sp 00000200
+
+Symbol: __initial_sp
+   Definitions
+      At line 65 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      None
+Comment: __initial_sp unused
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+HEAP 00000000
+
+Symbol: HEAP
+   Definitions
+      At line 72 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      None
+Comment: HEAP unused
+HeapMem 00000000
+
+Symbol: HeapMem
+   Definitions
+      At line 74 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 327 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 329 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+__heap_base 00000000
+
+Symbol: __heap_base
+   Definitions
+      At line 73 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      None
+Comment: __heap_base unused
+__heap_limit 00000000
+
+Symbol: __heap_limit
+   Definitions
+      At line 76 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      None
+Comment: __heap_limit unused
+4 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+RESET 00000000
+
+Symbol: RESET
+   Definitions
+      At line 90 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      None
+Comment: RESET unused
+Reset_Handler 000000C0
+
+Symbol: Reset_Handler
+   Definitions
+      At line 161 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 101 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 162 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+__Vectors 00000000
+
+Symbol: __Vectors
+   Definitions
+      At line 99 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 98 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 153 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+__Vectors_End 000000C0
+
+Symbol: __Vectors_End
+   Definitions
+      At line 151 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 153 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+Comment: __Vectors_End used once
+am_adc_isr 000000E8
+
+Symbol: am_adc_isr
+   Definitions
+      At line 259 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 134 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 221 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_brownout_isr 000000E8
+
+Symbol: am_brownout_isr
+   Definitions
+      At line 258 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 118 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 220 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_busfault_isr 000000E4
+
+Symbol: am_busfault_isr
+   Definitions
+      At line 205 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 105 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 206 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_clkgen_isr 000000E8
+
+Symbol: am_clkgen_isr
+   Definitions
+      At line 261 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 120 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 223 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_ctimer_isr 000000E8
+
+Symbol: am_ctimer_isr
+   Definitions
+      At line 272 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 131 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 234 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_debugmon_isr 000000E8
+
+Symbol: am_debugmon_isr
+   Definitions
+      At line 255 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 112 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 217 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_default_isr 000000E8
+
+Symbol: am_default_isr
+   Definitions
+      At line 215 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      None
+Comment: am_default_isr unused
+am_fault_isr 000000DE
+
+Symbol: am_fault_isr
+   Definitions
+      At line 190 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 103 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 191 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_flash_isr 000000E8
+
+Symbol: am_flash_isr
+   Definitions
+      At line 286 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 145 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 248 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_gpio_isr 000000E8
+
+Symbol: am_gpio_isr
+   Definitions
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 271 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 130 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 233 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_iomaster0_isr 000000E8
+
+Symbol: am_iomaster0_isr
+   Definitions
+      At line 265 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 124 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 227 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_iomaster1_isr 000000E8
+
+Symbol: am_iomaster1_isr
+   Definitions
+      At line 266 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 125 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 228 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_iomaster2_isr 000000E8
+
+Symbol: am_iomaster2_isr
+   Definitions
+      At line 267 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 126 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 229 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_iomaster3_isr 000000E8
+
+Symbol: am_iomaster3_isr
+   Definitions
+      At line 268 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 127 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 230 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_iomaster4_isr 000000E8
+
+Symbol: am_iomaster4_isr
+   Definitions
+      At line 269 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 128 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 231 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_iomaster5_isr 000000E8
+
+Symbol: am_iomaster5_isr
+   Definitions
+      At line 270 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 129 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 232 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Relocatable symbols
+
+am_ioslave_acc_isr 000000E8
+
+Symbol: am_ioslave_acc_isr
+   Definitions
+      At line 264 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 123 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 226 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_ioslave_ios_isr 000000E8
+
+Symbol: am_ioslave_ios_isr
+   Definitions
+      At line 263 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 122 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 225 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_memmanage_isr 000000E0
+
+Symbol: am_memmanage_isr
+   Definitions
+      At line 195 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 196 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+Comment: am_memmanage_isr used once
+am_mpufault_isr 000000E2
+
+Symbol: am_mpufault_isr
+   Definitions
+      At line 200 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 104 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 201 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_nmi_isr 000000DC
+
+Symbol: am_nmi_isr
+   Definitions
+      At line 185 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 102 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 186 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_pdm_isr 000000E8
+
+Symbol: am_pdm_isr
+   Definitions
+      At line 276 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 135 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 238 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_pendsv_isr 000000E8
+
+Symbol: am_pendsv_isr
+   Definitions
+      At line 256 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 114 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 218 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_software0_isr 000000E8
+
+Symbol: am_software0_isr
+   Definitions
+      At line 287 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 146 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 249 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_software1_isr 000000E8
+
+Symbol: am_software1_isr
+   Definitions
+      At line 288 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 147 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 250 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_software2_isr 000000E8
+
+Symbol: am_software2_isr
+   Definitions
+      At line 289 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 148 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 251 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_software3_isr 000000E8
+
+Symbol: am_software3_isr
+   Definitions
+      At line 290 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 149 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 252 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_stimer_cmpr0_isr 000000E8
+
+Symbol: am_stimer_cmpr0_isr
+   Definitions
+      At line 278 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 137 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 240 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_stimer_cmpr1_isr 000000E8
+
+Symbol: am_stimer_cmpr1_isr
+   Definitions
+      At line 279 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 138 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 241 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_stimer_cmpr2_isr 000000E8
+
+
+
+
+ARM Macro Assembler    Page 6 Alphabetic symbol ordering
+Relocatable symbols
+
+Symbol: am_stimer_cmpr2_isr
+   Definitions
+      At line 280 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 139 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 242 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_stimer_cmpr3_isr 000000E8
+
+Symbol: am_stimer_cmpr3_isr
+   Definitions
+      At line 281 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 140 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 243 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_stimer_cmpr4_isr 000000E8
+
+Symbol: am_stimer_cmpr4_isr
+   Definitions
+      At line 282 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 141 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 244 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_stimer_cmpr5_isr 000000E8
+
+Symbol: am_stimer_cmpr5_isr
+   Definitions
+      At line 283 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 142 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 245 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_stimer_cmpr6_isr 000000E8
+
+Symbol: am_stimer_cmpr6_isr
+   Definitions
+      At line 284 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 143 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 246 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_stimer_cmpr7_isr 000000E8
+
+Symbol: am_stimer_cmpr7_isr
+   Definitions
+      At line 285 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 144 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 247 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_stimer_isr 000000E8
+
+Symbol: am_stimer_isr
+   Definitions
+      At line 277 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 136 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+
+
+ARM Macro Assembler    Page 7 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 239 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_svcall_isr 000000E8
+
+Symbol: am_svcall_isr
+   Definitions
+      At line 254 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 111 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 216 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_systick_isr 000000E8
+
+Symbol: am_systick_isr
+   Definitions
+      At line 257 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 115 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 219 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_uart0_isr 000000E8
+
+Symbol: am_uart0_isr
+   Definitions
+      At line 274 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 236 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+Comment: am_uart0_isr used once
+am_uart1_isr 000000E8
+
+Symbol: am_uart1_isr
+   Definitions
+      At line 275 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 133 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 237 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_uart_isr 000000E8
+
+Symbol: am_uart_isr
+   Definitions
+      At line 273 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 132 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 235 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_usagefault_isr 000000E6
+
+Symbol: am_usagefault_isr
+   Definitions
+      At line 210 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 106 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 211 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_vcomp_isr 000000E8
+
+Symbol: am_vcomp_isr
+   Definitions
+
+
+
+ARM Macro Assembler    Page 8 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 262 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 121 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 224 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+am_watchdog_isr 000000E8
+
+Symbol: am_watchdog_isr
+   Definitions
+      At line 260 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 119 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 222 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+48 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.text 00000000
+
+Symbol: .text
+   Definitions
+      At line 312 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      None
+Comment: .text unused
+__user_initial_stackheap 00000000
+
+Symbol: __user_initial_stackheap
+   Definitions
+      At line 326 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 325 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+Comment: __user_initial_stackheap used once
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+Heap 00000000
+
+Symbol: Heap
+   Definitions
+      At line 55 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 75 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 329 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+Stack 00000200
+
+Symbol: Stack
+   Definitions
+      At line 48 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 64 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 100 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+      At line 328 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+
+__Vectors_Size 000000C0
+
+Symbol: __Vectors_Size
+   Definitions
+      At line 153 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      None
+Comment: __Vectors_Size unused
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+__main 00000000
+
+Symbol: __main
+   Definitions
+      At line 163 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      At line 175 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+Comment: __main used once
+__use_two_region_memory 00000000
+
+Symbol: __use_two_region_memory
+   Definitions
+      At line 324 in file RTE\Device\AMAPH1KK-KBR\startup_apollo2.s
+   Uses
+      None
+Comment: __use_two_region_memory unused
+2 symbols
+403 symbols in table

@@ -72,5 +72,9 @@
 .\bin\i2c_loopback.o: ../../../../../utils/am_util_stdio.h
 .\bin\i2c_loopback.o: ../../../../../utils/am_util_string.h
 .\bin\i2c_loopback.o: ../../../../../utils/am_util_time.h
-.\bin\i2c_loopback.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
 .\bin\i2c_loopback.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+.\bin\i2c_loopback.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include\arm_math.h
+.\bin\i2c_loopback.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include\core_cm4.h
+.\bin\i2c_loopback.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include\cmsis_compiler.h
+.\bin\i2c_loopback.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include\cmsis_armcc.h
+.\bin\i2c_loopback.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

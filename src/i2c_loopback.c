@@ -1,8 +1,10 @@
+#define ARM_MATH_CM4
+#define __FPU_PRESENT 1
 #include "am_mcu_apollo.h"
 #include "am_bsp.h"
 #include "am_util.h"
-#include "inttypes.h"
 #include "math.h"
+#include "arm_math.h"
 
 
 //*****************************************************************************
@@ -64,8 +66,9 @@ int32_t data_temperature = 0;
 uint32_t altitude = 0;
 uint32_t coeff[] = {0,0,0,0,0,0,0,0};
 int32_t pressure_and_temperature[] = {0,0};
-float altitude_old = 0;
-float velocity_array[] = {0,0,0,0,0,0,0,0,0,0};
+float32_t pressure_old = 0;
+float32_t altitude_old = 0;
+float32_t velocity_array[] = {0,0,0,0,0,0,0,0,0,0};
 uint8_t velocity_array_counter = 0;
 static const uint8_t ASCII[][5] =
 {
@@ -217,14 +220,32 @@ static const uint8_t ASCII_BIG[][15] =
 // Kalman Initialization
 //
 //*****************************************************************************
-float dt = WAKE_INTERVAL_IN_MS;
-float xt[] = {0, 0, 0};
-float P[] = {158806, 107, 124, 0.157};
-float A[] = {1, 100, 0, 1};
-float H[] = {1, 0};
-float R = 1000000;
-float Q[] = {0.0025, 0.005, 0.005, 0.01};
-float eye[] = {1, 0, 0, 1};
+float32_t P_init[] = {158806, 107, 124, 0.157};
+const float32_t A_init[] = {1, 100, 0, 1};
+const float32_t H_init[] = {1, 0};
+const float32_t Q_init[] = {0.0025, 0.005, 0.005, 0.01};
+float32_t K_init[] = {0, 0};
+const float32_t R = 1e8;
+float32_t xt_init[] = {1, 1};
+const float32_t eye_init[] = {1, 0, 0, 1};
+
+arm_matrix_instance_f32 P = {2, 2, (float32_t *)P_init};
+arm_matrix_instance_f32 A = {2, 2, (float32_t *)A_init};
+arm_matrix_instance_f32 H = {1, 2, (float32_t *)H_init};
+arm_matrix_instance_f32 Q = {2, 2, (float32_t *)Q_init};
+arm_matrix_instance_f32 K = {2, 1, (float32_t *)K_init};
+arm_matrix_instance_f32 xt = {2, 1, (float32_t *)xt_init};
+arm_matrix_instance_f32 eye = {2, 2, (float32_t *)eye_init};
+
+//float dt = WAKE_INTERVAL_IN_MS;
+//float xt[] = {0, 0, 0}; 
+
+//float P[] = {158806, 107, 124, 0.157};
+//float A[] = {1, 100, 0, 1};
+//float H[] = {1, 0};
+//float R = 1000000;
+//float Q[] = {0.0025, 0.005, 0.005, 0.01};
+//float eye[] = {1, 0, 0, 1};
 
 //*****************************************************************************
 //
@@ -239,7 +260,7 @@ void itm_start(void);
 static void iom_set_up(void);
 void pressure_sensor_init(void);
 void pressure_sensor_read(void);
-void kalman_filter(int32_t data);
+void kalman_filter(uint32_t data);
 void display_init(void);
 void LcdString(char *characters, uint8_t x, uint8_t y);
 float calc_velocity(float x_new, float x_old, float temp);
@@ -455,7 +476,7 @@ am_stimer_cmpr0_isr(void)
     //
 		pressure_sensor_read();
 	
-		xt[2] = xt[0];
+		pressure_old = *xt.pData;
 	
 	
 		//
@@ -577,30 +598,28 @@ am_watchdog_isr(void)
 
 		am_hal_wdt_restart();
 	
-		float velocity = calc_velocity(xt[0], xt[2], data_temperature);
+		float32_t velocity = calc_velocity(*xt.pData, pressure_old, data_temperature);
 
 		if (velocity < 0)
 			write_big_number(10, 0, 0);
 		else
 			write_big_number(11, 0, 0);
 		
-		uint32_t first_digit = abs((int)velocity) % 10;
-		uint32_t second_digit = abs((int)(velocity * 10)) % 10;
+		uint32_t first_digit = abs((int32_t)velocity) % 10;
+		uint32_t second_digit = abs((int32_t)(velocity * 10)) % 10;
 
 		write_big_number(first_digit, 16, 0);
 		write_big_number(second_digit, 40, 0);
 		
-		char altitude_string[5];
+		char altitude_string[] = "     ";
 		am_util_stdio_sprintf(altitude_string, "%d", altitude);
 		altitude_string[3 + ((altitude / 1000) > 0)] = 'm';
-		am_util_stdio_printf("%s\n",altitude_string);
 		LcdString(altitude_string, 0, 4);
 		
 		char temperature_string[] = "     ";
 		am_util_stdio_sprintf(temperature_string, "%d", data_temperature / 100);
 		temperature_string[2 + (data_temperature < 0)] = 0x81;
 		temperature_string[3 + (data_temperature < 0)] = 'C';
-		am_util_stdio_printf("%s\n",temperature_string);
 		LcdString(temperature_string, 40, 4);
 		
 		//
@@ -610,16 +629,16 @@ am_watchdog_isr(void)
 		uint32_t big_gradient = 2;
 		uint32_t big_frequency = big_gradient * first_digit + big_offset;
 		
-		am_util_stdio_printf("This is the first digit: " "%d\n", first_digit);
+		// am_util_stdio_printf("This is the first digit: " "%d\n", first_digit);
 		
 		if(first_digit >= 1){
-			am_util_stdio_printf("Changing Frequency to: " "%d\n", big_frequency);
+			// am_util_stdio_printf("Changing Frequency to: " "%d\n", big_frequency);
 			
 			buzzer_change_frequency(big_frequency, 200);
 		}
 		
 		else {
-			am_util_stdio_printf(" No sound!\n");
+			// am_util_stdio_printf(" No sound!\n");
 			am_hal_ctimer_pin_disable(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
 		}
 
@@ -774,7 +793,7 @@ pressure_sensor_init(void)
 		}
 
 		pressure_sensor_read();
-		xt[0] = data_pressure;
+		*xt.pData = data_pressure;
 	}
 //*****************************************************************************
 //
@@ -843,7 +862,7 @@ pressure_sensor_read(void)
 		//
 		// Store the data
 		//
-		data_pressure = (int32_t)P;
+		data_pressure = (uint32_t)P;
 		data_temperature = TEMP;
 }
 //*****************************************************************************
@@ -852,38 +871,89 @@ pressure_sensor_read(void)
 //
 //*****************************************************************************	
 void
-kalman_filter(int32_t data)
+kalman_filter(uint32_t data)
 {
+			// Initialize temp matrices
+			float32_t temp_1_2_init[] = {0, 0};
+			float32_t temp_2_1_init[] = {0, 0};
+			float32_t temp_2_2_init[] = {0, 0, 0, 0};
+			float32_t temp_2_2_t_init[] = {0, 0, 0, 0};
+			
+			// Declare temp matrices
+			arm_matrix_instance_f32 temp_1_2 = {1, 2, (float32_t *)temp_1_2_init};
+			arm_matrix_instance_f32 temp_2_1 = {2, 1, (float32_t *)temp_2_1_init};
+			arm_matrix_instance_f32 temp_2_2 = {2, 2, (float32_t *)temp_2_2_init};
+			arm_matrix_instance_f32 temp_2_2_t = {2, 2, (float32_t *)temp_2_2_t_init};
+			
+			// x = A*x
+			arm_mat_mult_f32(&A, &xt, &temp_2_1);
+			for (int i = 0; i < 2; i++) *(xt.pData+i) = *(temp_2_1.pData+i);
+//			am_util_stdio_printf("%.2f, %.2f, %.2f, %.2f\n", *A.pData, *(A.pData+1), *(A.pData+2), *(A.pData+3));
+//			am_util_stdio_printf("%.2f, %.2f\n", *xt.pData, *(xt.pData+1));
+//			am_util_stdio_printf("%.2f, %.2f\n", *temp_xt.pData, *(temp_xt.pData+1));
 	
-		// x = A*x
-		xt[0] = xt[0] + dt*xt[1];
+			
+			// P = A*P*A'+Q
+			arm_mat_trans_f32(&A, &temp_2_2_t);
+			arm_mat_mult_f32(&A, &P, &temp_2_2);
+			arm_mat_mult_f32(&temp_2_2, &temp_2_2_t, &P);
+			for (int i = 0; i < 4; i++) *(temp_2_2.pData + i) = *(P.pData + i);
+			arm_mat_add_f32(&temp_2_2, &Q, &P);
 	
-		// P = A*P*A'+Q
-		P[0] += A[1]*(P[1]+P[2])+A[1]*A[1]*P[3]+Q[0];
-		P[1] += A[1]*P[3] + Q[1];
-		P[2] += A[1]*P[3] + Q[2];
-		P[3] += Q[3];
+			// y = Z - (H*x)
+			float32_t y = data - *xt.pData;
 	
-		// y = Z - (H*x)
-		float y = data - xt[0];
+			// S=(H*P*H'+R)
+			float32_t S = *P.pData + R;
 	
-		// S=(H*P*H'+R)
-		float S = P[0] + R;
-	
-		// K=P*H'*inv(S)
-		float K[] = {P[0]/S, P[2]/S};
-		
-		// xt = xt + K*y
-		xt[0] = (xt[0] + (K[0]*y));
-		xt[1] = (xt[1] + (K[1]*y));
-		
-		// P = (I-K)*P
-		P[0] = (1-K[0])*P[0];
-		P[1] = ((1-K[0])*P[1]);
-		P[2] = (P[2]-K[1]*P[0]);
-		P[3] = (P[3]-K[1]*P[1]);
-		
-		am_util_stdio_printf("%f %d\n", xt[0], data);
+			// K=P*H'*inv(S)
+			arm_mat_trans_f32(&H, &K);
+			arm_mat_mult_f32(&P, &K, &temp_2_1);
+			arm_mat_scale_f32(&temp_2_1, 1/S, &K);
+			
+			// xt = xt + K*y
+			arm_mat_scale_f32(&K, y, &temp_2_1);
+			arm_mat_add_f32(&xt, &temp_2_1, &xt);
+			
+			// P = (I-K*H)*P
+			arm_mat_mult_f32(&K, &H, &temp_2_2);
+			arm_mat_sub_f32(&eye, &temp_2_2, &temp_2_2);
+			arm_mat_mult_f32(&temp_2_2, &P, &temp_2_2_t);
+			for(int i = 0; i < 4; i++) *(P.pData + i) = *(temp_2_2_t.pData + i);
+			
+			am_util_stdio_printf("%f %d\n", *xt.pData, data);
+//			
+//			am_util_stdio_printf("%.2f\n", *xt.pData);
+			
+//		// x = A*x
+//		xt[0] = xt[0] + dt*xt[1];
+//	
+//		// P = A*P*A'+Q
+//		P[0] += A[1]*(P[1]+P[2])+A[1]*A[1]*P[3]+Q[0];
+//		P[1] += A[1]*P[3] + Q[1];
+//		P[2] += A[1]*P[3] + Q[2];
+//		P[3] += Q[3];
+//	
+//		// y = Z - (H*x)
+//		float y = data - xt[0];
+//	
+//		// S=(H*P*H'+R)
+//		float S = P[0] + R;
+//	
+//		// K=P*H'*inv(S)
+//		float K[] = {P[0]/S, P[2]/S};
+//		
+//		// xt = xt + K*y
+//		xt[0] = (xt[0] + (K[0]*y));
+//		xt[1] = (xt[1] + (K[1]*y));
+//		
+//		// P = (I-K)*P
+//		P[0] = (1-K[0])*P[0];
+//		P[1] = ((1-K[0])*P[1]);
+//		P[2] = (P[2]-K[1]*P[0]);
+//		P[3] = (P[3]-K[1]*P[1]);
+//		
+//		am_util_stdio_printf("%f %d\n", xt[0], data);
 }
 //*****************************************************************************
 //
@@ -1012,20 +1082,20 @@ LcdString(char *characters, uint8_t x, uint8_t y)
 //
 //*****************************************************************************
 float
-calc_velocity(float x_new, float x_old, float temp)
+calc_velocity(float32_t x_new, float32_t x_old, float32_t temp)
 {
 		// 
 		// Calculate altitude
 		//
-		float sea_press = 101325;
-		float altitude_new = 44330.0f * (1.0f - pow(x_new / sea_press, 0.1902949f));
-		altitude = (int)altitude_new;
+		float32_t sea_press = 101325;
+		float32_t altitude_new = 44330.0f * (1.0f - pow(x_new / sea_press, 0.1902949f));
+		altitude = (uint32_t)altitude_new;
 	
 		//
 		// Calculate vertical speed
 		//
-		float diff_altitude = altitude_new - altitude_old;
-		float vertical_speed = diff_altitude/WAKE_INTERVAL_IN_MS*1000;
+		float32_t diff_altitude = altitude_new - altitude_old;
+		float32_t vertical_speed = diff_altitude/WAKE_INTERVAL_IN_MS*1000;
 	
 		//
 		// Store altitude
@@ -1037,7 +1107,7 @@ calc_velocity(float x_new, float x_old, float temp)
 		//
 		velocity_array[velocity_array_counter] = vertical_speed;
 		velocity_array_counter = (velocity_array_counter + 1) % 10;
-		float vertical_speed_avg = 0;
+		float32_t vertical_speed_avg = 0;
 		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
 		vertical_speed_avg /= 10;
 
@@ -1085,7 +1155,7 @@ main(void)
     //
     // Enable Interrupts.
     //
-    am_hal_interrupt_master_enable();
+    // am_hal_interrupt_master_enable();
 
     //
     // Set up the IOM
