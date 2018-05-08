@@ -1,5 +1,5 @@
 Dependencies for Project 'i2c_loopback', Target 'i2c_loopback': (DO NOT MODIFY !)
-F (../src/i2c_loopback.c)(0x5AEF7086)(--c99 -c --cpu Cortex-M4.fp -D__EVAL -g -O0 -Otime --apcs=interwork --split_sections -I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -I ../src -I ../../../bsp -I ../../../../.. -I ../../../../../utils -I ../../../../../devices -I ../../../../../mcu/apollo2 -I ../../../../../mcu/apollo2/regs-I.\RTE\_i2c_loopback-IC:\Keil_v5\ARM\PACK\AmbiqMicro\Apollo_DFP\1.0.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DAPOLLO2_1024 -DAM_PACKAGE_BGA -DAM_PART_APOLLO2 -Dkeil-o .\bin\i2c_loopback.o --omf_browse .\bin\i2c_loopback.crf --depend .\bin\i2c_loopback.d)
+F (../src/i2c_loopback.c)(0x5AF15B92)(--c99 -c --cpu Cortex-M4.fp -D__EVAL -g -O0 -Otime --apcs=interwork --split_sections -I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -I ../src -I ../../../bsp -I ../../../../.. -I ../../../../../utils -I ../../../../../devices -I ../../../../../mcu/apollo2 -I ../../../../../mcu/apollo2/regs-I.\RTE\_i2c_loopback-IC:\Keil_v5\ARM\PACK\AmbiqMicro\Apollo_DFP\1.0.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DAPOLLO2_1024 -DAM_PACKAGE_BGA -DAM_PART_APOLLO2 -Dkeil-o .\bin\i2c_loopback.o --omf_browse .\bin\i2c_loopback.crf --depend .\bin\i2c_loopback.d)
 I (../../../../../mcu/apollo2/am_mcu_apollo.h)(0x5A1EEEBF)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x588BE5B4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x588BE5B4)
@@ -74,6 +74,7 @@ I (../../../../../utils/am_util_stdio.h)(0x5A1EEEC1)
 I (../../../../../utils/am_util_string.h)(0x5A1EEEC1)
 I (../../../../../utils/am_util_time.h)(0x5A1EEEC1)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x588BE5B4)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x588BE5B4)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include\arm_math.h)(0x5898ABFA)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include\core_cm4.h)(0x5898ABFA)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include\cmsis_compiler.h)(0x5898ABFA)

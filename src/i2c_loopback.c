@@ -4,6 +4,7 @@
 #include "am_bsp.h"
 #include "am_util.h"
 #include "math.h"
+#include "stdlib.h"
 #include "arm_math.h"
 
 
@@ -13,10 +14,10 @@
 //
 //*****************************************************************************
 
-#define WAKE_INTERVAL_IN_MS     100
+#define WAKE_INTERVAL_IN_MS     50
 #define XT_PERIOD               32768
 #define WAKE_INTERVAL           XT_PERIOD * WAKE_INTERVAL_IN_MS * 1e-3
-#define LCD_WAKE_INTERVAL_IN_MS 1234
+#define LCD_WAKE_INTERVAL_IN_MS 500
 #define LCD_XT_PERIOD           32768
 #define LCD_WAKE_INTERVAL       LCD_XT_PERIOD * LCD_WAKE_INTERVAL_IN_MS * 1e-3
 #define IOM_MODULE_I2C     			0 // This will have a side benefit of testing IOM4 in offset mode
@@ -211,6 +212,9 @@ static const uint8_t ASCII_BIG[][15] =
 	,{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00} // + top
 	,{0x00, 0x00, 0x00, 0x38, 0x38, 0x38, 0xFF, 0xFF, 0xFF, 0x38, 0x38, 0x38, 0x00, 0x00, 0x00} // + middle
 	,{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00} // + bottom
+	,{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00} //   top
+	,{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00} //   middle
+	,{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00} //   bottom
 	
 };
 
@@ -225,7 +229,7 @@ const float32_t A_init[] = {1, 100, 0, 1};
 const float32_t H_init[] = {1, 0};
 const float32_t Q_init[] = {0.0025, 0.005, 0.005, 0.01};
 float32_t K_init[] = {0, 0};
-const float32_t R = 1e8;
+const float32_t R = 1e7;
 float32_t xt_init[] = {1, 1};
 const float32_t eye_init[] = {1, 0, 0, 1};
 
@@ -263,7 +267,7 @@ void pressure_sensor_read(void);
 void kalman_filter(uint32_t data);
 void display_init(void);
 void LcdString(char *characters, uint8_t x, uint8_t y);
-float calc_velocity(float x_new, float x_old, float temp);
+void calc_velocity(float x_new, float x_old, float temp);
 void buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_frequency);
 void init_cTimer(void);
 void am_ctimer_isr(void);
@@ -475,15 +479,16 @@ am_stimer_cmpr0_isr(void)
     // Read the pressure data
     //
 		pressure_sensor_read();
+		
 	
 		pressure_old = *xt.pData;
-	
-	
+		
 		//
 		// Apply a Kalman filter to the pressure data
 		//
 		kalman_filter(data_pressure);
 		
+		calc_velocity(*xt.pData, pressure_old, data_temperature);
 }
 
 
@@ -598,15 +603,24 @@ am_watchdog_isr(void)
 
 		am_hal_wdt_restart();
 	
-		float32_t velocity = calc_velocity(*xt.pData, pressure_old, data_temperature);
+	
+		float32_t vertical_speed_avg = 0;
+		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
+		vertical_speed_avg /= 10;
 
-		if (velocity < 0)
-			write_big_number(10, 0, 0);
-		else
-			write_big_number(11, 0, 0);
+		// am_util_stdio_printf("%f\n", vertical_speed_avg);
+		if ((int32_t)(vertical_speed_avg*10) != 0) {
+			if (vertical_speed_avg < 0)
+				write_big_number(10, 0, 0);
+			else
+				write_big_number(11, 0, 0);
+		}
+		else {
+			write_big_number(12, 0, 0);
+		}
 		
-		uint32_t first_digit = abs((int32_t)velocity) % 10;
-		uint32_t second_digit = abs((int32_t)(velocity * 10)) % 10;
+		uint32_t first_digit = abs((int32_t)vertical_speed_avg) % 10;
+		uint32_t second_digit = abs((int32_t)(vertical_speed_avg * 10)) % 10;
 
 		write_big_number(first_digit, 16, 0);
 		write_big_number(second_digit, 40, 0);
@@ -625,13 +639,15 @@ am_watchdog_isr(void)
 		//
 		//BuzzerFrequencyStuff
 		//
+		uint32_t abs_of_velocity = (uint32_t) fabs(vertical_speed_avg);
+		
 		uint32_t big_offset = 0;
 		uint32_t big_gradient = 2;
-		uint32_t big_frequency = big_gradient * first_digit + big_offset;
+		uint32_t big_frequency = big_gradient * abs_of_velocity + big_offset;
 		
 		// am_util_stdio_printf("This is the first digit: " "%d\n", first_digit);
 		
-		if(first_digit >= 1){
+		if(fabs(vertical_speed_avg) >= 0.5){
 			// am_util_stdio_printf("Changing Frequency to: " "%d\n", big_frequency);
 			
 			buzzer_change_frequency(big_frequency, 200);
@@ -874,13 +890,11 @@ void
 kalman_filter(uint32_t data)
 {
 			// Initialize temp matrices
-			float32_t temp_1_2_init[] = {0, 0};
 			float32_t temp_2_1_init[] = {0, 0};
 			float32_t temp_2_2_init[] = {0, 0, 0, 0};
 			float32_t temp_2_2_t_init[] = {0, 0, 0, 0};
 			
 			// Declare temp matrices
-			arm_matrix_instance_f32 temp_1_2 = {1, 2, (float32_t *)temp_1_2_init};
 			arm_matrix_instance_f32 temp_2_1 = {2, 1, (float32_t *)temp_2_1_init};
 			arm_matrix_instance_f32 temp_2_2 = {2, 2, (float32_t *)temp_2_2_init};
 			arm_matrix_instance_f32 temp_2_2_t = {2, 2, (float32_t *)temp_2_2_t_init};
@@ -921,7 +935,7 @@ kalman_filter(uint32_t data)
 			arm_mat_mult_f32(&temp_2_2, &P, &temp_2_2_t);
 			for(int i = 0; i < 4; i++) *(P.pData + i) = *(temp_2_2_t.pData + i);
 			
-			am_util_stdio_printf("%f %d\n", *xt.pData, data);
+			// am_util_stdio_printf("%f %d\n", *xt.pData, data);
 //			
 //			am_util_stdio_printf("%.2f\n", *xt.pData);
 			
@@ -1081,14 +1095,14 @@ LcdString(char *characters, uint8_t x, uint8_t y)
 // Calculate vertical velocity
 //
 //*****************************************************************************
-float
+void
 calc_velocity(float32_t x_new, float32_t x_old, float32_t temp)
 {
 		// 
 		// Calculate altitude
 		//
 		float32_t sea_press = 101325;
-		float32_t altitude_new = 44330.0f * (1.0f - pow(x_new / sea_press, 0.1902949f));
+		float32_t altitude_new = 44330.0 * (1.0 - pow(x_new / sea_press, 0.1902949));
 		altitude = (uint32_t)altitude_new;
 	
 		//
@@ -1103,15 +1117,14 @@ calc_velocity(float32_t x_new, float32_t x_old, float32_t temp)
 		altitude_old = altitude_new;
 	
 		//
-		// Store last 10 veritcal speeds in array and average it
+		// Store last 10 veritcal speeds in array
 		//
 		velocity_array[velocity_array_counter] = vertical_speed;
 		velocity_array_counter = (velocity_array_counter + 1) % 10;
-		float32_t vertical_speed_avg = 0;
-		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
-		vertical_speed_avg /= 10;
-
-		return vertical_speed;
+	
+		//
+		// Store last 10 veritcal speeds in array and average it
+		//
 }
 //*****************************************************************************
 //
