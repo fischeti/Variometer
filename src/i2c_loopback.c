@@ -807,8 +807,12 @@ pressure_sensor_init(void)
 					coeff[i] = ((receive_coeff[i] & 0x0000FF00) >> 8) | ((receive_coeff[i] & 0x000000FF) << 8);
 			}
 		}
-
-		pressure_sensor_read();
+		
+		for (int i = 0; i < 10; i++) {
+				pressure_sensor_read();
+				am_util_delay_ms(50);
+		}
+		am_util_stdio_printf("%d\n", data_pressure);
 		*xt.pData = data_pressure;
 	}
 //*****************************************************************************
@@ -880,6 +884,8 @@ pressure_sensor_read(void)
 		//
 		data_pressure = (uint32_t)P;
 		data_temperature = TEMP;
+		
+		am_util_stdio_printf("%d\n", data_pressure);
 }
 //*****************************************************************************
 //
@@ -1121,10 +1127,6 @@ calc_velocity(float32_t x_new, float32_t x_old, float32_t temp)
 		//
 		velocity_array[velocity_array_counter] = vertical_speed;
 		velocity_array_counter = (velocity_array_counter + 1) % 10;
-	
-		//
-		// Store last 10 veritcal speeds in array and average it
-		//
 }
 //*****************************************************************************
 //
