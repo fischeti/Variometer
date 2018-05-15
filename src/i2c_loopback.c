@@ -225,13 +225,13 @@ static const uint8_t ASCII_BIG[][15] =
 // Kalman Initialization
 //
 //*****************************************************************************
-float32_t P_init[] = {158806, 107, 124, 0.157};
-const float32_t A_init[] = {1, 100, 0, 1};
+float32_t P_init[] = {12, 0, 0, 12};
+const float32_t A_init[] = {1, 50, 0, 1};
 const float32_t H_init[] = {1, 0};
-const float32_t Q_init[] = {0.0025, 0.005, 0.005, 0.01};
+const float32_t Q_init[] = {0.0025, 0, 0, 0.01};
 float32_t K_init[] = {0, 0};
 const float32_t R = 1e7;
-float32_t xt_init[] = {1, 1};
+float32_t xt_init[] = {1, 0};
 const float32_t eye_init[] = {1, 0, 0, 1};
 
 arm_matrix_instance_f32 P = {2, 2, (float32_t *)P_init};
@@ -496,6 +496,8 @@ am_stimer_cmpr0_isr(void)
 		//
 		kalman_filter(data_pressure);
 		
+		am_util_stdio_printf("%d %f\n", data_pressure, *xt.pData);
+		
 		calc_velocity(*xt.pData, pressure_old, data_temperature);
 }
 
@@ -673,7 +675,7 @@ am_watchdog_isr(void)
 		}
 		
 		else {
-			am_util_stdio_printf(" No sound!\n");
+			// am_util_stdio_printf(" No sound!\n");
 			am_hal_ctimer_pin_disable(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
 		}
 
@@ -1203,6 +1205,11 @@ main(void)
 		am_hal_gpio_out_bit_set(BUZZER_PIN);
 		
 		//
+    // Initialize the sensor and read the coefficients
+    //
+		pressure_sensor_init();
+		
+		//
 		// Init Timers
 		//
     stimer_init();
@@ -1217,10 +1224,7 @@ main(void)
 		
 		init_watchdog();
 		
-		//
-    // Initialize the sensor and read the coefficients
-    //
-		pressure_sensor_init();
+
 		
 		//
     // Initialize display
