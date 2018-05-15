@@ -49,11 +49,12 @@
 // Macro definitions
 //
 //*****************************************************************************
-uint32_t BUZZER_WAKE_INTERVAL_IN_MS = 1000;
+uint32_t BUZZER_WAKE_INTERVAL_IN_MS = 250;
 uint32_t BUZZER_XT_PERIOD = 32768;
-uint32_t BUZZER_WAKE_INTERVAL = 32768 * 1000 * 1e-3;
-float buzzer_small_frequency = 1200;
+uint32_t BUZZER_WAKE_INTERVAL = 32768 * 250 * 1e-3;
+float32_t buzzer_small_frequency = 1200;
 uint32_t buzzer_ctimer_counter = 10, buzzer_ctimer_duty_cycle = 5;
+uint32_t big_frequency = 2;
 uint32_t toggle_bit = 1;
 
 //*****************************************************************************
@@ -306,18 +307,25 @@ buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_f
 	//
 	//Calculate Waketime for big Frequency
 	//
-	BUZZER_WAKE_INTERVAL_IN_MS = 1000 * (1.0 / desired_big_frequency);
+	
+	float32_t temp = 1000 * (1.0 / desired_big_frequency);
+	if(temp > 1 && temp <= 250){
+		BUZZER_WAKE_INTERVAL_IN_MS = temp;
+	}
 	
 	
 	//
 	//Calculate Counter value regarding to small Frequency
 	//
-	float period_time = 1.0 / 12000;
-	float float_buzzer_timer_counter = (int)(1 / (desired_small_frequency * period_time));
-	float float_buzzer_duty_cycle = float_buzzer_timer_counter / 2;
-		
-	buzzer_ctimer_counter = (int) float_buzzer_timer_counter - 1;
-	buzzer_ctimer_duty_cycle = (int) float_buzzer_duty_cycle;
+	float32_t period_time = 1.0 / 12000;
+	float32_t float_buzzer_timer_counter = (int)(1 / (desired_small_frequency * period_time));
+	float32_t float_buzzer_duty_cycle = float_buzzer_timer_counter / 2;
+	
+	temp = float_buzzer_duty_cycle;
+	if(temp > 1){
+		buzzer_ctimer_counter = (int) float_buzzer_timer_counter - 1;
+		buzzer_ctimer_duty_cycle = (int) float_buzzer_duty_cycle;
+	}
 }
 
 
@@ -480,7 +488,7 @@ am_stimer_cmpr0_isr(void)
     //
 		pressure_sensor_read();
 		
-	
+		if (data_pressure < 50000 || data_pressure > 110000) return;
 		pressure_old = *xt.pData;
 		
 		//
@@ -608,7 +616,6 @@ am_watchdog_isr(void)
 		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
 		vertical_speed_avg /= 10;
 
-		// am_util_stdio_printf("%f\n", vertical_speed_avg);
 		if ((int32_t)(vertical_speed_avg*10) != 0) {
 			if (vertical_speed_avg < 0)
 				write_big_number(10, 0, 0);
@@ -639,22 +646,34 @@ am_watchdog_isr(void)
 		//
 		//BuzzerFrequencyStuff
 		//
-		uint32_t abs_of_velocity = (uint32_t) fabs(vertical_speed_avg);
+		uint32_t abs_of_velocity = (uint32_t)fabs(vertical_speed_avg*10);
 		
-		uint32_t big_offset = 0;
-		uint32_t big_gradient = 2;
-		uint32_t big_frequency = big_gradient * abs_of_velocity + big_offset;
+		uint32_t big_offset = 4;
+		uint32_t big_gradient = 3;
+		uint32_t old_big_frequency = big_frequency;
+		big_frequency = (big_gradient * abs_of_velocity)/10 + big_offset;
 		
-		// am_util_stdio_printf("This is the first digit: " "%d\n", first_digit);
-		
-		if(fabs(vertical_speed_avg) >= 0.5){
-			// am_util_stdio_printf("Changing Frequency to: " "%d\n", big_frequency);
-			
-			buzzer_change_frequency(big_frequency, 200);
+		if(abs_of_velocity >= 1){
+			//This Shit is for climbing 
+			if (old_big_frequency != big_frequency && vertical_speed_avg >= 0){
+					uint32_t small_offset = 200;
+					uint32_t small_gradient = 20;
+					uint32_t small_frequency = (small_gradient * abs_of_velocity)/10 + small_offset;
+				
+					buzzer_change_frequency(big_frequency, small_frequency);
+			}
+			//This Shit is for sinking
+			else if(old_big_frequency != big_frequency && vertical_speed_avg < 0) {
+					uint32_t small_offset = 2;
+					uint32_t small_gradient = 5;
+					uint32_t small_frequency = (small_gradient * abs_of_velocity)/10 + small_offset;
+				
+					buzzer_change_frequency(big_frequency, small_frequency);
+			}
 		}
 		
 		else {
-			// am_util_stdio_printf(" No sound!\n");
+			am_util_stdio_printf(" No sound!\n");
 			am_hal_ctimer_pin_disable(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
 		}
 
@@ -808,11 +827,11 @@ pressure_sensor_init(void)
 			}
 		}
 		
-		for (int i = 0; i < 10; i++) {
+		am_util_delay_ms(50);
+
+		for (int i = 0; i < 100; i++) {
 				pressure_sensor_read();
-				am_util_delay_ms(50);
 		}
-		am_util_stdio_printf("%d\n", data_pressure);
 		*xt.pData = data_pressure;
 	}
 //*****************************************************************************
@@ -885,7 +904,7 @@ pressure_sensor_read(void)
 		data_pressure = (uint32_t)P;
 		data_temperature = TEMP;
 		
-		am_util_stdio_printf("%d\n", data_pressure);
+//		am_util_stdio_printf("%u\n", data_pressure);
 }
 //*****************************************************************************
 //
@@ -1188,6 +1207,14 @@ main(void)
 		//
     stimer_init();
 		init_cTimer();
+		
+		
+//		for(int i = 1; i < 100; i++){
+//				buzzer_change_frequency(10, i*20);
+//				am_util_stdio_printf("babanefurz %d\n", i*20);
+//				am_util_delay_ms(5000);
+//		}
+		
 		init_watchdog();
 		
 		//
