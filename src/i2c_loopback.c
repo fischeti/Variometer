@@ -49,12 +49,12 @@
 // Macro definitions
 //
 //*****************************************************************************
-uint32_t BUZZER_WAKE_INTERVAL_IN_MS = 1000;
+uint32_t BUZZER_WAKE_INTERVAL_IN_MS = 500;
 uint32_t BUZZER_XT_PERIOD = 32768;
 uint32_t BUZZER_WAKE_INTERVAL = 32768 * 250 * 1e-3;
 float32_t buzzer_small_frequency = 1200;
 uint32_t buzzer_ctimer_counter = 10, buzzer_ctimer_duty_cycle = 5;
-uint32_t big_frequency = 2;
+float big_frequency = 0.5;
 uint32_t toggle_bit = 1;
 uint32_t constantSink = 0;
 
@@ -295,7 +295,7 @@ void kalman_filter(uint32_t data);
 void display_init(void);
 void LcdString(char *characters, uint8_t x, uint8_t y);
 void calc_velocity(float x_new, float x_old, float temp);
-void buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_frequency);
+void buzzer_change_frequency(float desired_big_frequency, uint32_t desired_small_frequency);
 void init_cTimer(void);
 void am_ctimer_isr(void);
 void am_stimer_cmpr1_isr(void);
@@ -322,7 +322,7 @@ am_hal_wdt_config_t g_sWatchdogConfig =
 //
 //*****************************************************************************
 void
-buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_frequency)
+buzzer_change_frequency(float desired_big_frequency, uint32_t desired_small_frequency)
 {
 	
 	//
@@ -331,12 +331,17 @@ buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_f
 	am_hal_ctimer_pin_enable(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA); 
 
 	//
-	//Calculate Waketime for big Frequency
+	//Calculate Waketime for big Frequency Minimal Frequency is 2Hz -> 500ms Period
 	//
 	
 	float32_t temp = 1000 * (1.0 / desired_big_frequency);
-	if(temp > 1 && temp <= 1000){
+
+	if(temp > 1 && temp <= 500){
 		BUZZER_WAKE_INTERVAL_IN_MS = temp;
+	}
+	
+	else{
+		BUZZER_WAKE_INTERVAL_IN_MS = 500;
 	}
 	
 	
@@ -420,7 +425,7 @@ stimer_init(void)
     //
     // Enable compare A, B, (C) interrupt in STIMER
     //
-    am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREA | AM_HAL_STIMER_INT_COMPAREB/* | AM_HAL_STIMER_INT_COMPAREC*/);
+    am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREA | AM_HAL_STIMER_INT_COMPAREB);
 
 	
     //
@@ -428,7 +433,7 @@ stimer_init(void)
     //
     am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR0);
 		am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR1);
-		// am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR2);
+	
 		
     //
     // Configure the STIMER and run
@@ -436,11 +441,10 @@ stimer_init(void)
     am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
     am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
 		am_hal_stimer_compare_delta_set(1, BUZZER_WAKE_INTERVAL);
-		// am_hal_stimer_compare_delta_set(2, LCD_WAKE_INTERVAL);
+		
     am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ |
                          AM_HAL_STIMER_CFG_COMPARE_A_ENABLE | 
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE);
 
 }
 //*****************************************************************************
@@ -490,8 +494,7 @@ am_stimer_cmpr0_isr(void)
 		// Freeze the sTimer counter
 		//
 		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE);
 
     //
     // Check the timer interrupt status.
@@ -508,8 +511,7 @@ am_stimer_cmpr0_isr(void)
 		// Continue sTimer counter
 		//
 		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE);
     
 		//
     // Read the pressure data
@@ -524,7 +526,7 @@ am_stimer_cmpr0_isr(void)
 		//
 		kalman_filter(data_pressure);
 		
-		am_util_stdio_printf("%d %f\n", data_pressure, *xt.pData);
+		//am_util_stdio_printf("%d %f\n", data_pressure, *xt.pData);
 		
 		calc_velocity(*xt.pData, pressure_old, data_temperature);
 }
@@ -538,12 +540,12 @@ am_stimer_cmpr0_isr(void)
 void
 am_stimer_cmpr1_isr(void)
 {
+	
 		//
 		// Freeze the sTimer counter
 		//
 		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
+                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE);
 	
 	
 		//
@@ -590,49 +592,8 @@ am_stimer_cmpr1_isr(void)
 	// Continue sTimer counter
 	//
 	am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
-													 AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
-													 AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
+													 AM_HAL_STIMER_CFG_COMPARE_B_ENABLE);
 		
-}
-//*****************************************************************************
-//
-// Timer Interrupt Service Routine (ISR)
-//
-//*****************************************************************************
-void
-am_stimer_compr2_isr(void)
-{
-		//
-		// Freeze the sTimer counter
-		//
-		am_hal_stimer_config(AM_HAL_STIMER_CFG_FREEZE | AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
-
-
-		//
-    // Check the timer interrupt status.
-    //
-    am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREC);
-	
-	
-		//
-		// Increment compare Register C
-		// 
-    am_hal_stimer_compare_delta_set(2, LCD_WAKE_INTERVAL);
-	
-		// am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(0));
-		// am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(1));
-		// am_util_stdio_printf("%d" "\n", am_hal_stimer_compare_get(2));
-		// am_util_stdio_printf("%d" "\n", am_hal_stimer_counter_get());
-	
-	
-		//
-		// Continue sTimer counter
-		//
-		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE);
 }
 
 //*****************************************************************************
@@ -686,19 +647,17 @@ am_watchdog_isr(void)
 		//BuzzerFrequencyStuff
 		//
 		
-		uint32_t abs_of_velocity = (uint32_t)fabs(vertical_speed_avg*10);
+		float abs_of_velocity = (uint32_t)fabs(vertical_speed_avg*10);
 		
-		uint32_t big_offset = 1;
-		uint32_t big_gradient = 1;
-		uint32_t old_big_frequency = big_frequency;
-		big_frequency = (big_gradient * abs_of_velocity)/10 + big_offset;
+		float big_offset = 0.5;
+		float big_gradient = 1.0;
+		float old_big_frequency = big_frequency;
+		big_frequency = (big_gradient * abs_of_velocity)/10.0 + big_offset;
 		
 		if(second_digit != 0 || first_digit != 0){
 			
 			//This Shit is for climbing 
 			if (old_big_frequency != big_frequency && vertical_speed_avg >= 0){
-				
-					am_util_stdio_printf("Hoi ich hanen change festgstellt und will duruf\n");
 				
 					constantSink = 0;
 				
@@ -712,15 +671,11 @@ am_watchdog_isr(void)
 			//This Shit is for sinking
 			else if(old_big_frequency != big_frequency && vertical_speed_avg < 0) {
 				
-					am_util_stdio_printf("Hoi ich hanen change festgstellt und will durab\n");
-				
 					constantSink = 1;
 				
 					uint32_t small_offset = 100;
 					uint32_t small_gradient = 20;
 					uint32_t small_frequency = (small_gradient * abs_of_velocity)/10 + small_offset;
-				
-					am_util_stdio_printf("Constant down sound!\n");
 				
 					buzzer_change_frequency(big_frequency, small_frequency);
 			}
