@@ -334,7 +334,7 @@ buzzer_change_frequency(float desired_big_frequency, uint32_t desired_small_freq
 	//Calculate Waketime for big Frequency Minimal Frequency is 2Hz -> 500ms Period
 	//
 	
-	float32_t temp = 1000 * (1.0 / desired_big_frequency);
+	float32_t temp = 1000 * (1 / desired_big_frequency);
 
 	if(temp > 1 && temp <= 500){
 		BUZZER_WAKE_INTERVAL_IN_MS = temp;
@@ -634,6 +634,7 @@ am_watchdog_isr(void)
 		write_big_number(first_digit, 16, 0);
 		write_big_number(second_digit, 40, 0);
 		
+		am_util_stdio_printf("%d\n", altitude);
 		char altitude_string[] = "     ";
 		am_util_stdio_sprintf(altitude_string, "%d", altitude);
 		altitude_string[3 + ((altitude / 1000) > 0)] = 'm';
@@ -654,7 +655,7 @@ am_watchdog_isr(void)
 		float big_offset = 0.5;
 		float big_gradient = 1.0;
 		float old_big_frequency = big_frequency;
-		big_frequency = (big_gradient * abs_of_velocity)/10.0 + big_offset;
+		big_frequency = (big_gradient * abs_of_velocity)/10 + big_offset;
 		
 		if(second_digit != 0 || first_digit != 0){
 			
@@ -813,13 +814,16 @@ pressure_sensor_init(void)
 		// Send reset command
 		//
 		uint8_t cmd = CMD_RESET;
-		uint32_t res = am_hal_iom_i2c_write(IOM_MODULE_I2C, MS5611_I2C_ADRESS, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
-	
+		uint32_t res;
+		for (int i = 0; i < 0x100; i++) {
+				res = am_hal_iom_i2c_write(IOM_MODULE_I2C, i/*MS5611_I2C_ADRESS*/, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
+				am_util_stdio_printf("i2c adress: %x; status: %d\n ", i, res);
+		}
 		//
 		// Check if reset was succesful
 		//
 		if (res != 0) {
-				am_util_stdio_printf("initialization not succesfull\n");
+				am_util_stdio_printf("res = %d; initialization not succesfull\n", res);
 		}
 		else {
 			
@@ -844,6 +848,8 @@ pressure_sensor_init(void)
 				pressure_sensor_read();
 		}
 		*xt.pData = data_pressure;
+		
+		am_util_stdio_printf("%d\n", data_pressure);
 	}
 //*****************************************************************************
 //
@@ -914,7 +920,6 @@ pressure_sensor_read(void)
 		//
 		data_pressure = (uint32_t)P;
 		data_temperature = TEMP;
-		
 }
 //*****************************************************************************
 //
@@ -1190,14 +1195,14 @@ main(void)
 		pressure_sensor_init();
 		
 		//
-    // Initialize displayz
+    // Initialize display
     //
 		display_init();
 		
 		//
 		// Init Timers
 		//
-    stimer_init();
+		stimer_init();
 		init_cTimer();
 		init_watchdog();
 			
