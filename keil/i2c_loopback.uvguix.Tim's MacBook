@@ -11,17 +11,17 @@
     <View>
       <WinId>38003</WinId>
       <ViewName>Registers</ViewName>
-      <TableColWidths>115 128</TableColWidths>
+      <TableColWidths>115 127</TableColWidths>
     </View>
     <View>
       <WinId>346</WinId>
       <ViewName>Code Coverage</ViewName>
-      <TableColWidths>1010 160</TableColWidths>
+      <TableColWidths>1010 644</TableColWidths>
     </View>
     <View>
       <WinId>204</WinId>
       <ViewName>Performance Analyzer</ViewName>
-      <TableColWidths>1170</TableColWidths>
+      <TableColWidths>1170 175 175 134</TableColWidths>
     </View>
   </SECTreeCtrl>
 
@@ -36,7 +36,7 @@
       <WinId>1936</WinId>
       <ViewName>Watch 1</ViewName>
       <UserString></UserString>
-      <TableColWidths>80 80 80</TableColWidths>
+      <TableColWidths>130 80 80</TableColWidths>
     </View>
     <View>
       <WinId>1937</WinId>
@@ -48,7 +48,7 @@
       <WinId>1935</WinId>
       <ViewName>Call Stack + Locals</ViewName>
       <UserString></UserString>
-      <TableColWidths>80 80 80</TableColWidths>
+      <TableColWidths>192 157 146</TableColWidths>
     </View>
     <View>
       <WinId>2506</WinId>
@@ -3516,11 +3516,11 @@
       <ActiveTab>0</ActiveTab>
       <Doc>
         <Name>../src/i2c_loopback.c</Name>
-        <ColumnNumber>60</ColumnNumber>
-        <TopLine>76</TopLine>
-        <CurrentLine>243</CurrentLine>
+        <ColumnNumber>18</ColumnNumber>
+        <TopLine>358</TopLine>
+        <CurrentLine>1075</CurrentLine>
         <Folding>1</Folding>
-        <ContractedFolders>75,178,328,357,380,414,501,556,679,692,705,741,836,907,995,1055,1084,1116</ContractedFolders>
+        <ContractedFolders>75,178,223,324,392,415,449,484,536,591,632,714,727,740,776,871,942,1098,1127,1159</ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
       <Doc>
