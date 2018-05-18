@@ -32,11 +32,16 @@ compiling am_util_stdio.c...
 compiling startup_keil.s...
 compiling am_util_faultisr.c...
 compiling i2c_loopback.c...
+../src/i2c_loopback.c(337): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  	float32_t temp = 1000 * (1.0 / desired_big_frequency);
+../src/i2c_loopback.c(655): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  		big_frequency = (big_gradient * abs_of_velocity)/10.0 + big_offset;
+../src/i2c_loopback.c: 2 warnings, 0 errors
 linking...
-Program Size: Code=29944 RO-data=1936 RW-data=368 ZI-data=4976  
+Program Size: Code=29892 RO-data=1932 RW-data=368 ZI-data=4976  
 After Build - User command #1: fromelf --bin --output bin\i2c_loopback.bin bin\i2c_loopback.axf
 After Build - User command #2: fromelf -cedrst --output bin\i2c_loopback.txt bin\i2c_loopback.axf
-".\bin\i2c_loopback.axf" - 0 Error(s), 0 Warning(s).
+".\bin\i2c_loopback.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -50,7 +55,7 @@ Package Vendor: AmbiqMicro
   C:\Keil_v5\ARM\PACK\AmbiqMicro\Apollo_DFP\1.0.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
