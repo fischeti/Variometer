@@ -118,11 +118,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-<<<<<<< HEAD
-          <Name>\ò“</Name>
-=======
           <Name>/</Name>
->>>>>>> 8e430aa4f660cca1104d3161996f35202d040d0d
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -195,7 +191,7 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>1</periodic>
-        <aLwin>0</aLwin>
+        <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
