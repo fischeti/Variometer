@@ -958,7 +958,6 @@ pressure_sensor_read(void)
 		data_pressure = (uint32_t)P;
 		data_temperature = TEMP;
 		
-//		am_util_stdio_printf("%u\n", data_pressure);
 }
 //*****************************************************************************
 //
@@ -981,9 +980,6 @@ kalman_filter(uint32_t data)
 			// x = A*x
 			arm_mat_mult_f32(&A, &xt, &temp_2_1);
 			for (int i = 0; i < 2; i++) *(xt.pData+i) = *(temp_2_1.pData+i);
-//			am_util_stdio_printf("%.2f, %.2f, %.2f, %.2f\n", *A.pData, *(A.pData+1), *(A.pData+2), *(A.pData+3));
-//			am_util_stdio_printf("%.2f, %.2f\n", *xt.pData, *(xt.pData+1));
-//			am_util_stdio_printf("%.2f, %.2f\n", *temp_xt.pData, *(temp_xt.pData+1));
 	
 			
 			// P = A*P*A'+Q
@@ -1013,40 +1009,7 @@ kalman_filter(uint32_t data)
 			arm_mat_sub_f32(&eye, &temp_2_2, &temp_2_2);
 			arm_mat_mult_f32(&temp_2_2, &P, &temp_2_2_t);
 			for(int i = 0; i < 4; i++) *(P.pData + i) = *(temp_2_2_t.pData + i);
-			
-			// am_util_stdio_printf("%f %d\n", *xt.pData, data);
-//			
-//			am_util_stdio_printf("%.2f\n", *xt.pData);
-			
-//		// x = A*x
-//		xt[0] = xt[0] + dt*xt[1];
-//	
-//		// P = A*P*A'+Q
-//		P[0] += A[1]*(P[1]+P[2])+A[1]*A[1]*P[3]+Q[0];
-//		P[1] += A[1]*P[3] + Q[1];
-//		P[2] += A[1]*P[3] + Q[2];
-//		P[3] += Q[3];
-//	
-//		// y = Z - (H*x)
-//		float y = data - xt[0];
-//	
-//		// S=(H*P*H'+R)
-//		float S = P[0] + R;
-//	
-//		// K=P*H'*inv(S)
-//		float K[] = {P[0]/S, P[2]/S};
-//		
-//		// xt = xt + K*y
-//		xt[0] = (xt[0] + (K[0]*y));
-//		xt[1] = (xt[1] + (K[1]*y));
-//		
-//		// P = (I-K)*P
-//		P[0] = (1-K[0])*P[0];
-//		P[1] = ((1-K[0])*P[1]);
-//		P[2] = (P[2]-K[1]*P[0]);
-//		P[3] = (P[3]-K[1]*P[1]);
-//		
-//		am_util_stdio_printf("%f %d\n", xt[0], data);
+
 }
 //*****************************************************************************
 //
