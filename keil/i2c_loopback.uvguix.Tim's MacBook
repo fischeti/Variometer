@@ -3517,7 +3517,7 @@
       <Doc>
         <Name>../src/i2c_loopback.c</Name>
         <ColumnNumber>0</ColumnNumber>
-        <TopLine>312</TopLine>
+        <TopLine>330</TopLine>
         <CurrentLine>355</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
