@@ -231,7 +231,7 @@ const float32_t H_init[] = {1, 0};
 const float32_t Q_init[] = {0.0025, 0, 0, 0.01};
 float32_t K_init[] = {0, 0};
 const float32_t R = 1e7;
-float32_t xt_init[] = {1, 0};
+float32_t xt_init[] = {0, 0};
 const float32_t eye_init[] = {1, 0, 0, 1};
 
 arm_matrix_instance_f32 P = {2, 2, (float32_t *)P_init};
@@ -241,16 +241,6 @@ arm_matrix_instance_f32 Q = {2, 2, (float32_t *)Q_init};
 arm_matrix_instance_f32 K = {2, 1, (float32_t *)K_init};
 arm_matrix_instance_f32 xt = {2, 1, (float32_t *)xt_init};
 arm_matrix_instance_f32 eye = {2, 2, (float32_t *)eye_init};
-
-//float dt = WAKE_INTERVAL_IN_MS;
-//float xt[] = {0, 0, 0}; 
-
-//float P[] = {158806, 107, 124, 0.157};
-//float A[] = {1, 100, 0, 1};
-//float H[] = {1, 0};
-//float R = 1000000;
-//float Q[] = {0.0025, 0.005, 0.005, 0.01};
-//float eye[] = {1, 0, 0, 1};
 
 //*****************************************************************************
 //
