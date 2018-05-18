@@ -11,6 +11,7 @@
 *.uvoptx
 *.htm
 *.txt
+*.axf
 
 # Linker output
 *.ilk
