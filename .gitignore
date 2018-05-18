@@ -56,3 +56,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# weird project Tim's MacBook file
+keil/i2c_loopback.uvguix.Tim's MacBook
