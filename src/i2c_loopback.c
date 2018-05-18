@@ -1233,7 +1233,7 @@ main(void)
 		pressure_sensor_init();
 		
 		//
-    // Initialize display
+    // Initialize displayz
     //
 		display_init();
 		
