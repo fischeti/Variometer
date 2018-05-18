@@ -49,13 +49,14 @@
 // Macro definitions
 //
 //*****************************************************************************
-uint32_t BUZZER_WAKE_INTERVAL_IN_MS = 250;
+uint32_t BUZZER_WAKE_INTERVAL_IN_MS = 1000;
 uint32_t BUZZER_XT_PERIOD = 32768;
 uint32_t BUZZER_WAKE_INTERVAL = 32768 * 250 * 1e-3;
 float32_t buzzer_small_frequency = 1200;
 uint32_t buzzer_ctimer_counter = 10, buzzer_ctimer_duty_cycle = 5;
 uint32_t big_frequency = 2;
 uint32_t toggle_bit = 1;
+uint32_t constantSink = 0;
 
 //*****************************************************************************
 //
@@ -309,7 +310,7 @@ buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_f
 	//
 	
 	float32_t temp = 1000 * (1.0 / desired_big_frequency);
-	if(temp > 1 && temp <= 250){
+	if(temp > 1 && temp <= 1000){
 		BUZZER_WAKE_INTERVAL_IN_MS = temp;
 	}
 	
@@ -322,6 +323,7 @@ buzzer_change_frequency(uint32_t desired_big_frequency, uint32_t desired_small_f
 	float32_t float_buzzer_duty_cycle = float_buzzer_timer_counter / 2;
 	
 	temp = float_buzzer_duty_cycle;
+	
 	if(temp > 1){
 		buzzer_ctimer_counter = (int) float_buzzer_timer_counter - 1;
 		buzzer_ctimer_duty_cycle = (int) float_buzzer_duty_cycle;
@@ -366,6 +368,7 @@ init_cTimer()
 void
 am_ctimer_isr(void)
 {
+	
   //
   // Clear the interrupt that got us here.
   //
@@ -508,7 +511,6 @@ am_stimer_cmpr0_isr(void)
 void
 am_stimer_cmpr1_isr(void)
 {
-	
 		//
 		// Freeze the sTimer counter
 		//
@@ -534,26 +536,36 @@ am_stimer_cmpr1_isr(void)
 		// 
     am_hal_stimer_compare_delta_set(1, BUZZER_WAKE_INTERVAL);
 
+
 		//
-    // Toggle the cTimer.
+    // Toggle the cTimer if there is no constant Sink.
     //
 		
-		toggle_bit = !toggle_bit;
-		
-		if(toggle_bit){
-			am_hal_ctimer_start(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
-		}	
-		
-		else{
-			am_hal_ctimer_clear(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
+		if(!constantSink){
+			toggle_bit = !toggle_bit;
+			
+			if(toggle_bit){
+				am_hal_ctimer_start(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
+			}	
+			
+			else{
+				am_hal_ctimer_clear(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
+			}
 		}
 		
-		//
-		// Continue sTimer counter
-		//
-		am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
-                         AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
-                         AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
+		//Here constantSink is active, so there will be a constant sound
+		else{
+			am_hal_ctimer_start(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
+		}
+	
+	
+	//
+	// Continue sTimer counter
+	//
+	am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ | AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
+													 AM_HAL_STIMER_CFG_COMPARE_B_ENABLE/* |
+													 AM_HAL_STIMER_CFG_COMPARE_C_ENABLE*/);
+		
 }
 //*****************************************************************************
 //
@@ -646,27 +658,42 @@ am_watchdog_isr(void)
 		//
 		//BuzzerFrequencyStuff
 		//
+		
 		uint32_t abs_of_velocity = (uint32_t)fabs(vertical_speed_avg*10);
 		
-		uint32_t big_offset = 4;
-		uint32_t big_gradient = 3;
+		uint32_t big_offset = 1;
+		uint32_t big_gradient = 1;
 		uint32_t old_big_frequency = big_frequency;
 		big_frequency = (big_gradient * abs_of_velocity)/10 + big_offset;
 		
-		if(abs_of_velocity >= 1){
+		if(second_digit != 0 || first_digit != 0){
+			
 			//This Shit is for climbing 
 			if (old_big_frequency != big_frequency && vertical_speed_avg >= 0){
+				
+					am_util_stdio_printf("Hoi ich hanen change festgstellt und will duruf\n");
+				
+					constantSink = 0;
+				
 					uint32_t small_offset = 200;
 					uint32_t small_gradient = 20;
 					uint32_t small_frequency = (small_gradient * abs_of_velocity)/10 + small_offset;
 				
 					buzzer_change_frequency(big_frequency, small_frequency);
 			}
+			
 			//This Shit is for sinking
 			else if(old_big_frequency != big_frequency && vertical_speed_avg < 0) {
-					uint32_t small_offset = 2;
-					uint32_t small_gradient = 5;
+				
+					am_util_stdio_printf("Hoi ich hanen change festgstellt und will durab\n");
+				
+					constantSink = 1;
+				
+					uint32_t small_offset = 100;
+					uint32_t small_gradient = 20;
 					uint32_t small_frequency = (small_gradient * abs_of_velocity)/10 + small_offset;
+				
+					am_util_stdio_printf("Constant down sound!\n");
 				
 					buzzer_change_frequency(big_frequency, small_frequency);
 			}
@@ -1208,10 +1235,10 @@ main(void)
     stimer_init();
 		init_cTimer();
 		
-		
+//		
 //		for(int i = 1; i < 100; i++){
 //				buzzer_change_frequency(10, i*20);
-//				am_util_stdio_printf("babanefurz %d\n", i*20);
+//				am_util_stdio_printf("bananefurz %d\n", i*20);
 //				am_util_delay_ms(5000);
 //		}
 		
