@@ -1265,24 +1265,6 @@ main(void)
 		am_hal_gpio_out_bit_set(BUZZER_PIN);
 		
 		//
-<<<<<<< HEAD
-		// Init Timers
-		//
-    stimer_init();
-		init_cTimer();
-		
-//		
-//		for(int i = 1; i < 100; i++){
-//				buzzer_change_frequency(10, i*20);
-//				am_util_stdio_printf("bananefurz %d\n", i*20);
-//				am_util_delay_ms(5000);
-//		}
-		
-		init_watchdog();
-		
-		//
-=======
->>>>>>> 8e430aa4f660cca1104d3161996f35202d040d0d
     // Initialize the sensor and read the coefficients
     //
 		pressure_sensor_init();
