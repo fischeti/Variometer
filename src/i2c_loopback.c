@@ -358,6 +358,8 @@ buzzer_change_frequency(float desired_big_frequency, uint32_t desired_small_freq
 		buzzer_ctimer_counter = (int) float_buzzer_timer_counter - 1;
 		buzzer_ctimer_duty_cycle = (int) float_buzzer_duty_cycle;
 	}
+	
+	// hoihoihoi
 }
 
 
