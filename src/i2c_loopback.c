@@ -34,7 +34,7 @@
 #define CMD_ADC_2048 0x06    		// ADC OSR=2048
 #define CMD_ADC_4096 0x08    		// ADC OSR=4096
 #define CMD_PROM_RD  0xA0  			// Prom read command 
-#define MS5611_I2C_ADRESS 0x77	// MS5611 adress 
+#define MS5611_I2C_ADRESS 0x76	// MS5611 adress 
 #define DRIVE_SLAVE_RESET_PIN		14
 #define D_C_PIN				13
 #define SPI_SCLK_PIN	8
@@ -689,7 +689,6 @@ am_watchdog_isr(void)
 			am_hal_ctimer_pin_disable(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
 		}
 
-
 }
 //*****************************************************************************
 //
@@ -817,8 +816,10 @@ pressure_sensor_init(void)
 		uint32_t res;
 		for (int i = 0; i < 0x100; i++) {
 				res = am_hal_iom_i2c_write(IOM_MODULE_I2C, i/*MS5611_I2C_ADRESS*/, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
-				am_util_stdio_printf("i2c adress: %x; status: %d\n ", i, res);
+				am_util_stdio_printf("i2c adress: %x; status: %d\n", i, res);
 		}
+		
+		res = am_hal_iom_i2c_write(IOM_MODULE_I2C, MS5611_I2C_ADRESS, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
 		//
 		// Check if reset was succesful
 		//
