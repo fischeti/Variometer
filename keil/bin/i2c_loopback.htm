@@ -3,9 +3,9 @@
 <title>Static Call Graph - [.\bin\i2c_loopback.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\bin\i2c_loopback.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Thu May 31 14:57:48 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Thu Jun 07 09:59:35 2018
 <BR><P>
-<H3>Maximum Stack Usage =        464 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        472 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 am_stimer_cmpr0_isr &rArr; calc_velocity &rArr; __hardfp_pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf &rArr; __dunder_d &rArr; _fp_trapveneer &rArr; _fp_trap &rArr; __rt_SIGFPE &rArr; __rt_SIGFPE_inner &rArr; __default_signal_display &rArr; _ttywrch
 <P>
@@ -939,7 +939,7 @@ Global Symbols
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_master_set
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_interrupt_master_disable
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_big_number
+<BR>[Called By]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_big_number
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;display_init
 <LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LcdString
 </UL>
@@ -1118,7 +1118,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1d]"></a>am_stimer_cmpr0_isr</STRONG> (Thumb, 118 bytes, Stack size 8 bytes, i2c_loopback.o(i.am_stimer_cmpr0_isr))
-<BR><BR>[Stack]<UL><LI>Max Depth = 464<LI>Call Chain = am_stimer_cmpr0_isr &rArr; calc_velocity &rArr; __hardfp_pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf &rArr; __dunder_d &rArr; _fp_trapveneer &rArr; _fp_trap &rArr; __rt_SIGFPE &rArr; __rt_SIGFPE_inner &rArr; __default_signal_display &rArr; _ttywrch
+<BR><BR>[Stack]<UL><LI>Max Depth = 472<LI>Call Chain = am_stimer_cmpr0_isr &rArr; calc_velocity &rArr; __hardfp_pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf &rArr; __dunder_d &rArr; _fp_trapveneer &rArr; _fp_trap &rArr; __rt_SIGFPE &rArr; __rt_SIGFPE_inner &rArr; __default_signal_display &rArr; _ttywrch
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_stimer_int_clear
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_stimer_config
@@ -1181,6 +1181,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_terminal_clear
 <LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pressure_sensor_init
+<LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity
 <LI><a href="#[b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_watchdog_isr
 </UL>
 
@@ -1223,18 +1224,18 @@ Global Symbols
 <LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
 </UL>
 
-<P><STRONG><a name="[b]"></a>am_watchdog_isr</STRONG> (Thumb, 652 bytes, Stack size 72 bytes, i2c_loopback.o(i.am_watchdog_isr))
+<P><STRONG><a name="[b]"></a>am_watchdog_isr</STRONG> (Thumb, 714 bytes, Stack size 72 bytes, i2c_loopback.o(i.am_watchdog_isr))
 <BR><BR>[Stack]<UL><LI>Max Depth = 360<LI>Call Chain = am_watchdog_isr &rArr; write_big_number &rArr; am_hal_iom_spi_write &rArr; am_hal_iom_spi_write_nq &rArr; am_hal_iom_workaround_word_write &rArr; am_hal_iom_fifo_write
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_sprintf
 <LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
 <LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_wdt_int_clear
 <LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_ctimer_pin_disable
-<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_big_number
+<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_big_number
 <LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;buzzer_change_frequency
 <LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LcdString
 <LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fabs
-<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2uiz
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_keil.o(RESET)
@@ -1247,11 +1248,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_watchdog_isr
 </UL>
 
-<P><STRONG><a name="[99]"></a>calc_velocity</STRONG> (Thumb, 200 bytes, Stack size 72 bytes, i2c_loopback.o(i.calc_velocity))
-<BR><BR>[Stack]<UL><LI>Max Depth = 456<LI>Call Chain = calc_velocity &rArr; __hardfp_pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf &rArr; __dunder_d &rArr; _fp_trapveneer &rArr; _fp_trap &rArr; __rt_SIGFPE &rArr; __rt_SIGFPE_inner &rArr; __default_signal_display &rArr; _ttywrch
+<P><STRONG><a name="[99]"></a>calc_velocity</STRONG> (Thumb, 242 bytes, Stack size 80 bytes, i2c_loopback.o(i.calc_velocity))
+<BR><BR>[Stack]<UL><LI>Max Depth = 464<LI>Call Chain = calc_velocity &rArr; __hardfp_pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf &rArr; __dunder_d &rArr; _fp_trapveneer &rArr; _fp_trap &rArr; __rt_SIGFPE &rArr; __rt_SIGFPE_inner &rArr; __default_signal_display &rArr; _ttywrch
 </UL>
-<BR>[Calls]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_pow
-<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
+<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_pow
+<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
@@ -1344,7 +1346,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[ca]"></a>pressure_sensor_init</STRONG> (Thumb, 244 bytes, Stack size 56 bytes, i2c_loopback.o(i.pressure_sensor_init))
+<P><STRONG><a name="[ca]"></a>pressure_sensor_init</STRONG> (Thumb, 204 bytes, Stack size 56 bytes, i2c_loopback.o(i.pressure_sensor_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 336<LI>Call Chain = pressure_sensor_init &rArr; pressure_sensor_read &rArr; am_hal_iom_i2c_write &rArr; am_hal_iom_i2c_write_nq &rArr; am_hal_i2c_bit_bang_send &rArr; i2c_send_byte &rArr; i2c_pull_and_wait_scl_hi
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_util_stdio_printf
@@ -1388,7 +1390,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[b0]"></a>write_big_number</STRONG> (Thumb, 140 bytes, Stack size 32 bytes, i2c_loopback.o(i.write_big_number))
+<P><STRONG><a name="[b1]"></a>write_big_number</STRONG> (Thumb, 140 bytes, Stack size 32 bytes, i2c_loopback.o(i.write_big_number))
 <BR><BR>[Stack]<UL><LI>Max Depth = 288<LI>Call Chain = write_big_number &rArr; am_hal_iom_spi_write &rArr; am_hal_iom_spi_write_nq &rArr; am_hal_iom_workaround_word_write &rArr; am_hal_iom_fifo_write
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;am_hal_iom_spi_write
@@ -1652,7 +1654,7 @@ Global Symbols
 <LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_d2f
 </UL>
 
-<P><STRONG><a name="[b1]"></a>__aeabi_f2d</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, f2d.o(x$fpl$f2d))
+<P><STRONG><a name="[b0]"></a>__aeabi_f2d</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, f2d.o(x$fpl$f2d))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = __aeabi_f2d
 </UL>
 <BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_velocity

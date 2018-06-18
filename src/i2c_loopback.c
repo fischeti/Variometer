@@ -617,6 +617,13 @@ am_watchdog_isr(void)
 		float32_t vertical_speed_avg = 0;
 		for (int i = 0; i < 10; i++) vertical_speed_avg += velocity_array[i];
 		vertical_speed_avg /= 10;
+	
+		if (abs(vertical_speed_avg) > 5) {
+				for(int i = 0; i < 10; i++) {
+					am_util_stdio_printf("%f, ", velocity_array[i]);
+				}
+				am_util_stdio_printf("\n");
+		}
 
 		if ((int32_t)(vertical_speed_avg*10) != 0) {
 			if (vertical_speed_avg < 0)
@@ -634,7 +641,6 @@ am_watchdog_isr(void)
 		write_big_number(first_digit, 16, 0);
 		write_big_number(second_digit, 40, 0);
 		
-		am_util_stdio_printf("%d\n", altitude);
 		char altitude_string[] = "     ";
 		am_util_stdio_sprintf(altitude_string, "%d", altitude);
 		altitude_string[3 + ((altitude / 1000) > 0)] = 'm';
@@ -685,7 +691,6 @@ am_watchdog_isr(void)
 		}
 		
 		else {
-			// am_util_stdio_printf(" No sound!\n");
 			am_hal_ctimer_pin_disable(BUZZER_PWM_TIMER, AM_HAL_CTIMER_TIMERA);
 		}
 
@@ -813,13 +818,8 @@ pressure_sensor_init(void)
 		// Send reset command
 		//
 		uint8_t cmd = CMD_RESET;
-		uint32_t res;
-		for (int i = 0; i < 0x100; i++) {
-				res = am_hal_iom_i2c_write(IOM_MODULE_I2C, i/*MS5611_I2C_ADRESS*/, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
-				am_util_stdio_printf("i2c adress: %x; status: %d\n", i, res);
-		}
-		
-		res = am_hal_iom_i2c_write(IOM_MODULE_I2C, MS5611_I2C_ADRESS, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
+		uint32_t res = am_hal_iom_i2c_write(IOM_MODULE_I2C, MS5611_I2C_ADRESS, (uint32_t *)&cmd, 1, AM_HAL_IOM_RAW);
+	
 		//
 		// Check if reset was succesful
 		//
@@ -1022,7 +1022,7 @@ display_init(void)
 				am_hal_iom_spi_write(IOM_MODULE_SPI, 0, (uint32_t *)(para_picture+i), 1, AM_HAL_IOM_RAW);
 		}
 		
-		am_util_delay_ms(5000);
+		am_util_delay_ms(1000);
 		
 		//
 		// clear Display
@@ -1134,6 +1134,9 @@ calc_velocity(float32_t x_new, float32_t x_old, float32_t temp)
 		//
 		velocity_array[velocity_array_counter] = vertical_speed;
 		velocity_array_counter = (velocity_array_counter + 1) % 10;
+		
+		am_util_stdio_printf("altitude: %f, velocity: %f, pressure: %d\n", altitude_new, vertical_speed, data_pressure);
+		
 }
 //*****************************************************************************
 //
