@@ -1,3 +1,5 @@
+![example workflow](https://github.com/fischeti/Variometer/actions/workflows/main.yml/badge.svg)
+
 This is the readme of the Variometer Groupprojekt.
 Our name is `new Flytec` ©Jing Yang.
 Michi is the PCB guy.
