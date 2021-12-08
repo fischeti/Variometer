@@ -7,11 +7,12 @@ on: [push, pull_request]
 # Clang-Format Check #
 ######################
 # Check C/C++ files for correct formatting.
-clangfmt:
-  name: C/C++ Sources
-  runs-on: ubuntu-latest
-  steps:
-  - uses: actions/checkout@v2
-  - uses: DoozyX/clang-format-lint-action@v0.11
-    with:
-      clangFormatVersion: 10
+jobs:
+  clangfmt:
+    name: C/C++ Sources
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: DoozyX/clang-format-lint-action@v0.11
+      with:
+        clangFormatVersion: 10
